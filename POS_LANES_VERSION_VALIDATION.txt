@@ -1,0 +1,421 @@
+'===========================================================================
+' POS LANE VERSION VALIDATION 
+'===========================================================================
+
+Dim WshShell
+Set WshShell = CreateObject("WScript.Shell")
+
+'--- Read from Excel FIRST, before anything else ---
+Dim excelPath
+excelPath = "C:\Users\BanuchandhiranM\Lanes\POS_Lanes_TestData.xlsx" '--> Change path as per local setup
+
+Dim laneAddress, userId, userPassword, domainName
+Call ReadLoginData(excelPath, laneAddress, userId, userPassword, domainName)
+
+'===========================================================================
+' CLEANUP & LAUNCH
+'===========================================================================
+SystemUtil.CloseProcessByName "javaw.exe"
+SystemUtil.CloseProcessByName "java.exe"
+SystemUtil.CloseProcessByName "excel.exe"
+Wait 2
+
+WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False
+Wait 10
+
+AIUtil.SetContext Window("regexpwndtitle:=IBM Endpoint Manager.*", "regexpwndclass:=SunAwtFrame")
+
+'===========================================================================
+' MAIN FLOW
+'===========================================================================
+Call openConnection(laneAddress)
+Call userAuthenticate(userId, userPassword, domainName)
+Call runPowerShellToNotepad()
+'Call SaveClipboardToFile()
+Call ValidateVersions(excelPath)
+
+
+'===========================================================================
+' FUNCTION: READ LOGIN DATA FROM EXCEL (LoginData sheet)
+' Reads: laneAddress, userId, userPassword, domainName
+'===========================================================================
+Function ReadLoginData(excelPath, ByRef laneAddress, ByRef userId, ByRef userPassword, ByRef domainName)
+
+    Dim objExcel
+    Dim objWorkbook
+    Dim objSheet
+    Dim lastRow
+    Dim i
+    Dim paramName
+    Dim paramValue
+
+    Set objExcel    = CreateObject("Excel.Application")
+    objExcel.Visible = False
+
+    Set objWorkbook = objExcel.Workbooks.Open(excelPath)
+    Set objSheet    = objWorkbook.Sheets("LoginData")
+
+    lastRow = objSheet.UsedRange.Rows.Count
+
+    ' LoginData sheet layout:
+    ' Column A = ParameterName | Column B = Value
+    ' Row 1 = Header, data starts Row 2
+    For i = 2 To lastRow
+
+        paramName  = Trim(objSheet.Cells(i, 1).Value)
+        paramValue = Trim(objSheet.Cells(i, 2).Value)
+
+        Select Case LCase(paramName)
+            Case "laneaddress"  : laneAddress  = paramValue
+            Case "userid"       : userId        = paramValue
+            Case "userpassword" : userPassword  = paramValue
+            Case "domainname"   : domainName    = paramValue
+        End Select
+
+    Next
+
+    objWorkbook.Close False   ' Close without saving
+    objExcel.Quit
+
+    Reporter.ReportEvent micDone, "LoginData", _
+        "Lane: " & laneAddress & " | User: " & userId & " | Domain: " & domainName
+
+End Function
+
+
+'===========================================================================
+' FUNCTION: OPEN CONNECTION
+'===========================================================================
+Function openConnection(laneAddress)
+    AIUtil("down_triangle", micAnyText, micFromTop, 1).Click
+    Wait 2
+    AIUtil("down_triangle", micAnyText, micFromTop, 1).Click
+
+    AIUtil("text_box", "Address").RightClick
+    Wait 2
+    WshShell.SendKeys "{DOWN}"
+    WshShell.SendKeys "{DOWN}"
+    WshShell.SendKeys "{ENTER}"
+    Wait 2
+
+    AIUtil("text_box", "Address").Type laneAddress
+    AIUtil("button", "Active").Click
+    Wait 5
+
+    Reporter.ReportEvent micDone, "Connection", "Connected to lane: " & laneAddress
+End Function
+
+
+'===========================================================================
+' FUNCTION: LOGIN
+'===========================================================================
+Function userAuthenticate(userId, userPassword, domainName)
+    AIUtil("combobox", "User ID").Type userId
+    AIUtil("text_box", "Password").Type userPassword
+    AIUtil("combobox", "Domain").Click
+    Wait 2
+
+    Set combo = AIUtil("combobox", "Domain")
+    If Trim(combo.GetValue) <> Trim(domainName) Then
+        combo.Click
+        Wait 1
+    End If
+
+    AIUtil("button", "Login").Click
+    Wait 8
+
+    Reporter.ReportEvent micDone, "Login", "Logged in: " & userId
+End Function
+
+
+'===========================================================================
+' FUNCTION: RUN POWERSHELL -> SAVE OUTPUT TO NOTEPAD ON REMOTE
+'===========================================================================
+Function runPowerShellToNotepad()
+
+    Window("regexpwndtitle:=IBM Endpoint Manager.*").Activate
+    Wait 2
+    Window("regexpwndtitle:=IBM Endpoint Manager.*").Click 332, 10
+    Wait 3
+
+    WshShell.SendKeys "{ENTER}"
+    Wait 1
+    WshShell.SendKeys "{DOWN}"
+    Wait 1
+    WshShell.SendKeys "{ENTER}"
+    Wait 5
+
+    AIUtil.FindTextBlock("Task Manager").Click
+    Wait 4
+    AIUtil.FindTextBlock("File").Click
+    Wait 2
+    WshShell.SendKeys "{DOWN}"
+    Wait 1
+    WshShell.SendKeys "{ENTER}"
+    Wait 3
+
+    WshShell.SendKeys "powershell"
+    WshShell.SendKeys "{ENTER}"
+    Wait 7
+    
+    Dim psCmd
+    psCmd = "$paths = @{(}'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*','HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'{)}; Get-ItemProperty $paths -ErrorAction SilentlyContinue | Where-Object {{} $_.DisplayName {}} | Select-Object DisplayName, DisplayVersion | Sort-Object DisplayName | Format-Table -AutoSize | Out-String -Width 4096 | Out-File 'C:\Temp\apps_list.txt' -Encoding ascii"
+
+    WshShell.SendKeys psCmd
+    WshShell.SendKeys "{ENTER}"
+    Wait 12
+
+    WshShell.SendKeys "C:\Temp\apps_list.txt"
+    WshShell.SendKeys "{ENTER}"
+    Wait 5
+
+    WshShell.SendKeys "^a"
+    Wait 2
+    WshShell.SendKeys "^c"
+    Wait 5
+
+    Window("IBM Endpoint Manager for").Click 530, 11
+    Wait 10
+
+    WshShell.SendKeys "{DOWN}"
+    Wait 1
+    WshShell.SendKeys "{DOWN}"
+    Wait 1
+    WshShell.SendKeys "{ENTER}"
+    Wait 5
+
+    Call SaveClipboardToFile()
+
+    Reporter.ReportEvent micDone, "Clipboard", "Remote clipboard pulled to local machine."
+    Reporter.ReportEvent micDone, "PowerShell", "App list saved and opened in Notepad on remote."
+
+End Function
+
+
+'===========================================================================
+Function SaveClipboardToFile()
+
+    Dim html
+    Dim clipboardText
+    Dim fso
+    Dim txtFile
+
+    Set html = CreateObject("htmlfile")
+    clipboardText = html.ParentWindow.ClipboardData.GetData("Text")
+
+    If Trim(clipboardText) = "" Then
+        Reporter.ReportEvent micFail, "Clipboard Empty", _
+            "No text received from remote clipboard."
+        Exit Function
+    End If
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+
+    If Not fso.FolderExists("C:\Temp") Then
+        fso.CreateFolder "C:\Temp"
+    End If
+
+    Set txtFile = fso.CreateTextFile("C:\Temp\RemoteApps.txt", True)
+
+    txtFile.Write clipboardText
+    txtFile.Close
+
+    Reporter.ReportEvent micDone, "Clipboard Saved", _
+        "Saved to C:\Temp\RemoteApps.txt"
+
+End Function
+
+Function ValidateVersions(excelPath)
+
+    Dim fso
+    Dim txtFile
+    Dim fileContent
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+
+    If Not fso.FileExists("C:\Temp\RemoteApps.txt") Then
+        Reporter.ReportEvent micFail, "Version File", _
+            "RemoteApps.txt not found."
+        Exit Function
+    End If
+
+    Set txtFile = fso.OpenTextFile("C:\Temp\RemoteApps.txt", 1)
+    fileContent = txtFile.ReadAll
+    txtFile.Close
+
+    Dim objExcel
+    Dim objWorkbook
+    Dim objSheet
+
+    Set objExcel = CreateObject("Excel.Application")
+    objExcel.Visible = False
+
+    Set objWorkbook = objExcel.Workbooks.Open(excelPath)
+    Set objSheet = objWorkbook.Sheets("Versions")
+
+    Dim lastRow
+    Dim i
+
+    lastRow = objSheet.Cells(objSheet.Rows.Count, 2).End(-4162).Row
+
+    For i = 2 To lastRow
+
+        Dim appName
+        Dim expectedVersion
+        Dim actualVersion
+        Dim statusValue
+        Dim matchedLine
+        Dim cmp
+
+        appName = Trim(objSheet.Cells(i, 2).Value)
+        expectedVersion = Trim(objSheet.Cells(i, 3).Value)
+Reporter.ReportEvent micDone, "Searching", appName
+        matchedLine = FindApplication(fileContent, appName)
+Reporter.ReportEvent micDone, "Matched Line", matchedLine
+        If matchedLine <> "" Then
+
+            actualVersion = GetVersionFromLine(matchedLine)
+
+            If actualVersion <> "NOT FOUND" Then
+
+                cmp = CompareSemanticVersions(actualVersion, expectedVersion)
+
+                If cmp = "EQUAL" Or cmp = "HIGHER" Then
+                    statusValue = "PASS"
+                Else
+                    statusValue = "FAIL"
+                End If
+
+            Else
+
+                actualVersion = "NOT FOUND"
+                statusValue = "FAIL"
+
+            End If
+
+        Else
+
+            actualVersion = "NOT FOUND"
+            statusValue = "FAIL"
+
+        End If
+
+        objSheet.Cells(i, 4).Value = actualVersion
+        objSheet.Cells(i, 5).Value = statusValue
+
+        Reporter.ReportEvent micDone, appName, _
+            "Expected=" & expectedVersion & _
+            " | Actual=" & actualVersion & _
+            " | Result=" & statusValue
+
+    Next
+
+    objWorkbook.Save
+    objWorkbook.Close
+    objExcel.Quit
+
+    Reporter.ReportEvent micDone, _
+        "Version Validation", _
+        "Completed Successfully"
+
+End Function
+
+Function FindApplication(fileContent, appName)
+
+    Dim arrLines
+    Dim lineText
+    Dim searchText
+
+    arrLines = Split(fileContent, vbCrLf)
+
+    searchText = LCase(appName)
+
+    If InStr(searchText, "|") > 0 Then
+        searchText = Trim(Split(searchText, "|")(UBound(Split(searchText, "|"))))
+    End If
+
+    For Each lineText In arrLines
+
+        If InStr(1, LCase(lineText), searchText, vbTextCompare) > 0 Then
+
+            FindApplication = lineText
+            Exit Function
+
+        End If
+
+    Next
+
+    FindApplication = ""
+
+End Function
+Function GetVersionFromLine(lineText)
+
+    Dim regEx
+    Dim matches
+Set regEx = CreateObject("VBScript.RegExp")
+    
+    regEx.Pattern = "([0-9]+(\.[0-9A-Za-z\-]+)+)\s*$"
+    regEx.Global = False
+    regEx.IgnoreCase = True
+
+    If regEx.Test(lineText) Then
+
+        Set matches = regEx.Execute(lineText)
+        GetVersionFromLine = matches(0).Value
+
+    Else
+
+        GetVersionFromLine = "NOT FOUND"
+
+    End If
+
+End Function
+'===========================================================================
+' FUNCTION: COMPARE SEMANTIC VERSIONS
+' Returns: "EQUAL", "HIGHER", or "LOWER"
+'===========================================================================
+Function CompareSemanticVersions(actualVersion, expectedVersion)
+
+    Dim actualParts
+    Dim expectedParts
+    Dim maxLen
+    Dim i
+    Dim actualNum
+    Dim expectedNum
+
+    actualParts   = Split(actualVersion,   ".")
+    expectedParts = Split(expectedVersion, ".")
+
+    If UBound(actualParts) > UBound(expectedParts) Then
+        maxLen = UBound(actualParts)
+    Else
+        maxLen = UBound(expectedParts)
+    End If
+
+    For i = 0 To maxLen
+
+        If i > UBound(actualParts) Then
+            actualNum = 0
+        Else
+            actualNum = CInt(actualParts(i))
+        End If
+
+        If i > UBound(expectedParts) Then
+            expectedNum = 0
+        Else
+            expectedNum = CInt(expectedParts(i))
+        End If
+
+        If actualNum > expectedNum Then
+            CompareSemanticVersions = "HIGHER"
+            Exit Function
+        ElseIf actualNum < expectedNum Then
+            CompareSemanticVersions = "LOWER"
+            Exit Function
+        End If
+
+    Next
+
+    CompareSemanticVersions = "EQUAL"
+
+End Function
