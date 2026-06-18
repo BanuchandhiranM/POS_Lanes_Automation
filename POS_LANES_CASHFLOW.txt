@@ -1,5 +1,5 @@
 '===========================================================================
-' POS LANE CASH FLOW VALIDATION
+' POS LANE CASH FLOW VALIDATION 
 '===========================================================================
 
 Dim WshShell
@@ -14,6 +14,7 @@ Dim userPassword
 Dim domainName
 
 Dim userCode
+
 Dim securityCode
 
 Dim departmentButton
@@ -56,7 +57,7 @@ SystemUtil.CloseProcessByName "excel.exe"
 
 Wait 2
 
-WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False
+WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False	'--> Change path as per local setup
 
 Wait 10
 
@@ -125,7 +126,21 @@ Call TakeScreenshotToWord ("After User Authentication")
 Call signOn(userCode, securityCode)
 Call TakeScreenshotToWord ("After Sign On")
 Call productCheckin(departmentArray, iterator, miscButton, departmentButton, dobForTobacco, priceBelowLimit, tabaccoPriceOverLimit, tabaccoActualPrice, priceOverLimit_1, actualPrice_1, priceOverLimit_2, actualPrice_2)
-Call discountOnProduct(creditButton, couponType, couponName,couponAmount)
+
+couponName = GetCouponForDepartment(departmentArray)
+
+If couponName <> "" Then
+
+    Call discountOnProduct(creditButton, couponType, couponName, couponAmount)
+
+Else
+
+    Reporter.ReportEvent micDone, _
+        "Coupon Flow", _
+        "No eligible department found. Coupon skipped."
+
+End If
+
 Call productCheckout(totalButton) 
 Call finalProductCheckout()
 Call takeScreenshotToWord("End")
@@ -136,23 +151,37 @@ Call finalizeWordDocument()
 ' INITIALIZE WORD DOCUMENT
 '================================================
 Function initializeWordDocument()
-        Set objWord = CreateObject("Word.Application")
-        objWord.Visible = True
-        Set objDoc = objWord.Documents.Add()
-End Function
 
+    Set objWord = CreateObject("Word.Application")
+    objWord.Visible = True
+
+    Set objDoc = objWord.Documents.Add()
+
+    objDoc.Content.InsertAfter "POS Cash Flow Transaction - Test Evidence"
+    objDoc.Content.InsertParagraphAfter
+    objDoc.Content.InsertAfter "Execution Date : " & Date
+   objDoc.Content.InsertAfter "Execution Time : " & Hour(Now) & ":" & Minute(Now)
+    objDoc.Content.InsertParagraphAfter
+    objDoc.Content.InsertParagraphAfter
+
+End Function
 '================================================
 ' SAVE AND CLOSE WORD DOCUMENT
 '================================================
 Function finalizeWordDocument()
-        savePath = "C:\Users\BanuchandhiranM\Lanes\TestEvidence.docx" '----------->Change the file path
-        objDoc.SaveAs savePath
-        objDoc.Close
-        objWord.Quit
-        Set objDoc = Nothing
-        Set objWord = Nothing
-        'workbook.Close
-        'excel.Quit
+
+    savePath = "C:\Users\BanuchandhiranM\Lanes\CashFlow_" & _
+           Day(Now) & "_" & Hour(Now) & Minute(Now) & ".docx"                 '-------------change the path 
+
+    'MsgBox savePath
+
+    objDoc.SaveAs savePath
+    objDoc.Close
+    objWord.Quit
+
+    Set objDoc = Nothing
+    Set objWord = Nothing
+
 End Function
 
 '================================================
@@ -215,7 +244,8 @@ End Function
 ' LOGIN
 '================================================
 Function userAuthenticate(userId, userPassword, domainName)
-        AIUtil("combobox", "User ID").Type userId
+
+    AIUtil("combobox", "User ID").Type userId
     AIUtil("text_box", "Password").Type userPassword
     AIUtil("combobox", "Domain").Click
     Wait 2
@@ -255,61 +285,98 @@ End Function
 Function productCheckin(departmentArray, iterator, miscButton, departmentButton, dobForTobacco, priceBelowLimit, tabaccoPriceOverLimit, tabaccoActualPrice, priceOverLimit_1, actualPrice_1, priceOverLimit_2, actualPrice_2)
         Set WshShell = CreateObject("WScript.Shell")
         Dim dept
+        Dim dobValidated
+        dobValidated = False
         For iterator = 0 To UBound(departmentArray)
                 dept = Trim(departmentArray(iterator)) 
+                
                 Call departmentNavigation(miscButton, departmentButton)
-                '------ALCOHOL------
-                If dept = "Beer" or dept = "Wine" Then
-                        AIUtil.FindTextBlock(dept).Click
-                        '------ If DOB was already entered once popup will NOT appear again------
-                        '------ If session is fresh popup appears------ 
-                        'AIUtil.FindTextBlock("Clear").Click
-                        'wait(2)
-                        'WshShell.SendKeys dobForTobacco
-                        'wait(5)
-                        'WshShell.SendKeys "{ENTER}"
-                        wait(3)
-                        Call priceBelowLimitCheck(priceBelowLimit, dept)
-                        AIUtil.FindTextBlock(dept).Click
-                        Call priceOverLimitCheck(priceOverLimit_1, dept)
-                        AIUtil.FindTextBlock(dept).Click
-                        Call setActualPrice(actualPrice_1, dept)
 
-                '------TOBACCO------
-                ElseIf dept = "Tobacco" or dept = "Cigarettes" Then
+
+	'------ALCOHOL------
+               
+               If dept = "Beer" Or dept = "Wine" Then
+
+    AIUtil.FindTextBlock(dept).Click
+
+    If dobValidated = False Then
+
+        TakeScreenshotToWord("Before entering DOB for department : " & dept)
+        AIUtil.FindTextBlock("Clear").Click
+        wait(2)
+        WshShell.SendKeys dobForTobacco
+        Wait(3)
+
+        TakeScreenshotToWord("DOB Entered for department : " & dept)
+
+        WshShell.SendKeys "{ENTER}"
+        Wait(3)
+
+        dobValidated = True
+
+    End If
+
+    'Call priceBelowLimitCheck(priceBelowLimit, dept)
+
+    'AIUtil.FindTextBlock(dept).Click
+    'Call priceOverLimitCheck(priceOverLimit_1, dept)
+
+    'AIUtil.FindTextBlock(dept).Click
+   
+   Call setActualPrice(actualPrice_1, dept)
+
+    '------TOBACCO------
+    
+    ElseIf dept = "Tobacco" or dept = "Cigarettes" Then
+                        
                         AIUtil.FindTextBlock(dept).Click
                         wait(3)
-                        TakeScreenshotToWord ("Before entering DOB for department :" & dept)
-                        AIUtil.FindTextBlock("Clear").Click
+                       If dobValidated = False Then
+                       AIUtil.FindTextBlock("Clear").Click
                         wait(2)
-                        WshShell.SendKeys dobForTobacco
-                        wait(5)
-                        TakeScreenshotToWord ("DOB Entered for department :" & dept)
-                        WshShell.SendKeys "{ENTER}"
+    
+    TakeScreenshotToWord("Before entering DOB for department : " & dept)
+
+    WshShell.SendKeys dobForTobacco
+    Wait(3)
+
+    TakeScreenshotToWord("DOB Entered for department : " & dept)
+
+    WshShell.SendKeys "{ENTER}"
+    Wait(3)
+
+    dobValidated = True
+
+End If
                         wait(3)
-                        Call priceBelowLimitCheck(priceBelowLimit, dept)
-                        AIUtil.FindTextBlock(dept).Click
-                        Call priceOverLimitCheck(tabaccoPriceOverLimit, dept)
-                        AIUtil.FindTextBlock(dept).Click
-                        Call setActualPrice(tabaccoActualPrice, dept)
+    
+    'Call priceBelowLimitCheck(priceBelowLimit, dept)
+    'AIUtil.FindTextBlock(dept).Click
+    'Call priceOverLimitCheck(tabaccoPriceOverLimit, dept)
+    'AIUtil.FindTextBlock(dept).Click
 
-                '------MEAT / NON-FOOD------
-                ElseIf dept = "Meat" or dept = "Non-Food" Then
-                        AIUtil.FindTextBlock(dept).Click
-                        wait(2)
-                        Call priceBelowLimitCheck(priceBelowLimit, dept)
-                        AIUtil.FindTextBlock(dept).Click
-                        Call priceOverLimitCheck(priceOverLimit_2, dept)
-                        AIUtil.FindTextBlock(dept).Click
-                        Call setActualPrice(actualPrice_2, dept)
+Call setActualPrice(tabaccoActualPrice, dept)
+                
+ '------MEAT / NON-FOOD------
+ 
+ ElseIf dept = "Meat" or dept = "Non-Food" Then
+                      '  AIUtil.FindTextBlock(dept).Click
+                       ' wait(2)
+                       ' Call priceBelowLimitCheck(priceBelowLimit, dept)
+                       ' AIUtil.FindTextBlock(dept).Click
+                       ' Call priceOverLimitCheck(priceOverLimit_2, dept)
+                       ' AIUtil.FindTextBlock(dept).Click
+                       ' Call setActualPrice(actualPrice_2, dept)
 
-                '------DEFAULT------
-                Else
-                        AIUtil.FindTextBlock(dept).Click
-                        wait(2)
-                        Call priceBelowLimitCheck(priceBelowLimit, dept)
-                        AIUtil.FindTextBlock(dept).Click
-                        Call priceOverLimitCheck(priceOverLimit_1, dept)
+ 
+ '------DEFAULT------
+
+Else
+                     AIUtil.FindTextBlock(dept).Click
+                     wait(2)
+                     Call priceBelowLimitCheck(priceBelowLimit, dept)
+                     AIUtil.FindTextBlock(dept).Click
+                     Call priceOverLimitCheck(priceOverLimit_1, dept)
                         AIUtil.FindTextBlock(dept).Click
                         Call setActualPrice(actualPrice_1, dept)
                 End If
@@ -448,5 +515,55 @@ Function closeConsole()
     End If
 
     On Error GoTo 0
+
+End Function
+
+Function GetCouponForDepartment(departmentArray)
+
+    Dim i, dept
+
+    GetCouponForDepartment = ""
+
+    For i = 0 To UBound(departmentArray)
+
+        dept = UCase(Trim(departmentArray(i)))
+
+        Select Case dept
+
+            Case "GROCERY"
+                GetCouponForDepartment = "SC-Grocery"
+                Exit Function
+
+            Case "DELI"
+                GetCouponForDepartment = "SC-Deli"
+                Exit Function
+
+            Case "MEAT"
+                GetCouponForDepartment = "SC-Meat"
+                Exit Function
+
+            Case "NON-FOOD"
+                GetCouponForDepartment = "SC-Non Food"
+                Exit Function
+
+            Case "PRODUCE"
+                GetCouponForDepartment = "SC-Produce"
+                Exit Function
+
+            Case "HEALTH & BEAUTY"
+                GetCouponForDepartment = "SC-Health & Beauty"
+                Exit Function
+
+            Case "PREPARED FOOD"
+                GetCouponForDepartment = "SC-Prepared Food"
+                Exit Function
+
+            Case "FROZEN FOOD", "DAIRY", "FROZEN FOOD / DAIRY"
+                GetCouponForDepartment = "SC-Frozen Food / Dairy"
+                Exit Function
+
+        End Select
+
+    Next
 
 End Function
