@@ -1,0 +1,1598 @@
+﻿<?xml version="1.0"?>
+<!DOCTYPE Report
+[
+<!ELEMENT Report (General ,(Doc|BPT)) >
+<!ATTLIST Report ver CDATA #REQUIRED tmZone CDATA #REQUIRED>
+
+<!ELEMENT General ( DocLocation ) >
+<!ATTLIST General productName CDATA #REQUIRED productVer CDATA #REQUIRED os CDATA #REQUIRED host CDATA #REQUIRED qcserver CDATA #IMPLIED qcproject CDATA #IMPLIED SolManSolutionId CDATA #IMPLIED SolManProjectId CDATA #IMPLIED SolManTestPlanId CDATA #IMPLIED SolManTestPackageId CDATA #IMPLIED SolManUserInfoData CDATA #IMPLIED  >
+
+<!ELEMENT BPT (DName,Res,DVer?,TSet?,TInst?,NodeArgs,AdditionalInfo*,Doc*) >
+<!ATTLIST BPT rID ID #REQUIRED >
+
+<!ELEMENT Doc (DName,ConfName?,Res,DVer?,TSet?,TInst?,RunType?,DT?,AdditionalInfo*,Step*,DIter*,Step*,Action*,Doc*,Summary?,TestMaintenanceSummary*,NodeArgs?) >
+<!ATTLIST Doc rID ID #REQUIRED type (Test|BC|BPTWrapperTest|Flow|Group|Action) "Test" productName CDATA #REQUIRED BCIter CDATA #IMPLIED >
+
+<!ELEMENT RunType ( #PCDATA )>
+<!ATTLIST RunType fmStep (False|True) "False" batch (False|True) "False" upDesc (False|True) "False" upChk (False|True) "False" upAS (False|True) "False">
+
+<!ELEMENT DName ( #PCDATA ) >
+
+<!ELEMENT ConfName ( #PCDATA ) >
+
+<!ELEMENT Res ( #PCDATA ) >
+
+<!ELEMENT AdditionalInfo (AdditionalDataName,AdditionalDataValue ) >
+
+<!ELEMENT AdditionalDataName ( #PCDATA ) >
+
+<!ELEMENT AdditionalDataValue ( #PCDATA ) >
+
+<!ELEMENT DVer ( #PCDATA ) >
+
+<!ELEMENT TSet ( #PCDATA ) >
+
+<!ELEMENT TInst ( #PCDATA ) >
+
+<!ELEMENT DIter (Step*,Action+,Summary?,NodeArgs)>
+<!ATTLIST DIter rID ID #REQUIRED iterID CDATA #REQUIRED>
+
+<!ELEMENT DocLocation ( #PCDATA )>
+
+<!ELEMENT Action (AName,AIter*,(Step|HtmlStep|Action)*, Summary,ActionMaintenanceSummary*, NodeArgs ) >
+<!ATTLIST Action rID ID #REQUIRED>
+
+<!ELEMENT AIter ((Step|HtmlStep|Action)*,DataMapping?, Summary?,NodeArgs) >
+<!ATTLIST AIter rID ID #REQUIRED iterID CDATA #REQUIRED isCountable (False|True) "False" >
+
+<!ELEMENT AName ( #PCDATA ) >
+
+<!ELEMENT TestMaintenanceSummary (ActionMaintenanceSummary*) >
+<!ATTLIST TestMaintenanceSummary ObjectsAdded CDATA #REQUIRED ObjectsUpdated CDATA #REQUIRED StepsUpdated CDATA #REQUIRED StepsComments CDATA #REQUIRED><!ELEMENT ActionMaintenanceSummary (ObjectChange* ) >
+<!ATTLIST ActionMaintenanceSummary Action CDATA #REQUIRED Objects CDATA #REQUIRED Updated CDATA #REQUIRED LinesTotal CDATA #REQUIRED Added CDATA #REQUIRED LinesUpdated CDATA #REQUIRED>
+
+<!ELEMENT ObjectChange  (Hierarchy, PropertyChangeList* ) >
+<!ATTLIST ObjectChange Operation CDATA #IMPLIED OriginalRepository CDATA #IMPLIED>
+
+<!ELEMENT PropertyChangeList (PropertyDef*) >
+
+<!ELEMENT PropertyDef (OriginalValue, NewValue) >
+<!ATTLIST PropertyDef PropName CDATA #REQUIRED OriginRegularExpression (True|False) "False" NewRegularExpression (True|False) "False" AddedProperty (True|False) "False" >
+
+<!ELEMENT OriginalValue ( #PCDATA )>
+
+<!ELEMENT NewValue ( #PCDATA )>
+
+<!ELEMENT Hierarchy  (ObjectName, Hierarchy*) >
+<!ATTLIST Hierarchy MicClass CDATA #REQUIRED>
+
+<!ELEMENT ObjectName  ( #PCDATA ) >
+
+<!ELEMENT Step (Obj,Details,Time,TimeTick* ,(Step|HtmlStep|Doc)*, DataMapping?, NodeArgs) >
+<!ATTLIST Step rID ID #REQUIRED retval CDATA #IMPLIED>
+
+<!ELEMENT HtmlStep (HTML,TimeTick*,(Step|HtmlStep|Doc)*,NodeArgs) >
+<!ATTLIST HtmlStep rID ID #REQUIRED >
+
+<!ELEMENT Obj ( #PCDATA ) >
+<!ATTLIST Obj plainTxt (False|True) "True">
+
+<!ELEMENT Details ( #PCDATA ) >
+<!ATTLIST Details plainTxt (False|True) "True">
+
+<!ELEMENT Time ( #PCDATA ) >
+
+<!ELEMENT HTML ( #PCDATA ) >
+
+<!ELEMENT Disp ( #PCDATA ) >
+
+<!ELEMENT TimeTick ( #PCDATA ) >
+
+<!ELEMENT DataMapping ( DataMappedItem* )>
+<!ELEMENT DataMappedItem EMPTY >
+<!ATTLIST DataMappedItem dsName CDATA #REQUIRED >
+<!ATTLIST DataMappedItem rowId CDATA #REQUIRED >
+
+<!ELEMENT NodeArgs (Disp,TopPane?,BtmPane?,ExtendedInfo? )>
+<!ATTLIST NodeArgs eType CDATA #REQUIRED icon CDATA #REQUIRED nRep CDATA #REQUIRED UserNote CDATA #IMPLIED filter (False|True) "True">
+<!ATTLIST NodeArgs status (Passed|Failed|Done|Warning|Information) "Done">
+<!ATTLIST NodeArgs iconSel CDATA #IMPLIED nType CDATA #IMPLIED MovieMarker CDATA "">
+<!ATTLIST NodeArgs Source CDATA #IMPLIED SourceLine CDATA #IMPLIED StepFlowItemKey CDATA #IMPLIED >
+
+<!ELEMENT TopPane (Path)>
+
+<!ELEMENT BtmPane ( (Path|WR)?,ASHilite?)>
+<!ATTLIST BtmPane vType CDATA "HTML">
+
+<!ELEMENT Path ( #PCDATA ) >
+
+<!ELEMENT ASHilite ( #PCDATA ) >
+
+<!ELEMENT WR ( #PCDATA ) >
+
+<!ELEMENT ExtendedInfo ( StepData ) >
+
+<!ATTLIST ExtendedInfo StepType CDATA #REQUIRED>
+<!ELEMENT DT (NodeArgs) >
+<!ATTLIST DT rID ID #REQUIRED>
+
+<!ELEMENT Summary (Param*)>
+<!ATTLIST Summary sTime CDATA #IMPLIED eTime CDATA #IMPLIED passed CDATA #IMPLIED failed CDATA #IMPLIED warnings CDATA #IMPLIED retval CDATA #IMPLIED stopped (False|True) "False" >
+
+<!ELEMENT Param (ParamName,ParamVal)+ >
+<!ATTLIST Param paramInOut (In|Out) "In">
+
+<!ELEMENT ParamName ( #PCDATA ) >
+
+<!ELEMENT ParamVal ( #PCDATA ) >
+
+]
+>
+<Report ver="2.0" tmZone="India Standard Time">
+<General productName="OpenText UFT One" productVer="24.2" os="Windows 11" host="IBM-68H9R24"><DocLocation><![CDATA[C:\Users\BanuchandhiranM\Downloads\POSRegression_Latest (2)\Lanes_VersionValidation]]></DocLocation></General>
+<Doc rID="T1"   productName= "OpenText UFT One"  >
+<DName><![CDATA[Lanes_VersionValidation]]></DName>
+<Res><![CDATA[Res4]]></Res>
+<DT rID="T2">
+<NodeArgs eType="Table" icon="2" nRep="4" filter="False" >
+<Disp><![CDATA[Run-Time Data Table]]></Disp>
+<BtmPane vType="Table" >
+<Path><![CDATA[Default.xlsx]]></Path>
+</BtmPane>
+</NodeArgs>
+</DT>
+<Step rID="T3">
+<Obj plainTxt="False" ><![CDATA[Add-in(s) not activated]]></Obj>
+<Details plainTxt="False" ><![CDATA[The following add-in(s) were associated with your test, but are not currently loaded: 
+UIA.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:08:56]]></Time>
+<TimeTick>1782383936</TimeTick>
+<NodeArgs eType="Replay" icon="0" nRep="5" status="Warning" >
+<Disp><![CDATA[Add-in(s) not activated]]></Disp>
+</NodeArgs>
+</Step>
+<DIter rID="T4" iterID="1" >
+<Action rID="T5">
+<AName><![CDATA[Action1]]></AName>
+<Step rID="T6">
+<Obj ><![CDATA[LoginData]]></Obj>
+<Details ><![CDATA[Lane:  | User: vn44j5r | Domain: Delhaize]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:07]]></Time>
+<TimeTick>1782383947</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="9" Source="Action1" SourceLine="118" >
+<Disp><![CDATA[LoginData]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T7">
+<Obj ><![CDATA[Lane Start]]></Obj>
+<Details ><![CDATA[US90L01-09956]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:07]]></Time>
+<TimeTick>1782383947</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="10" Source="Action1" SourceLine="40" >
+<Disp><![CDATA[Lane Start]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T8">
+<Obj plainTxt="False" ><![CDATA[AIUtil.SetContext]]></Obj>
+<Details plainTxt="False" ><![CDATA[Set context Window("[ IBM Endpoint Manager for Remote Control ]") for AIUtil]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:15]]></Time>
+<TimeTick>1782383955</TimeTick>
+<NodeArgs eType="Replay" icon="0" nRep="11" nType="AIUtil" Source="Action1" SourceLine="54" >
+<Disp><![CDATA[AIUtil.SetContext]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T9">
+<Obj plainTxt="False" ><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:16]]></Time>
+<TimeTick>1782383956</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="13" Source="Action1" SourceLine="128" >
+<Disp><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf35.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T10">
+<Obj plainTxt="False" ><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:21]]></Time>
+<TimeTick>1782383961</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="15" Source="Action1" SourceLine="130" >
+<Disp><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf36.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T11">
+<Obj plainTxt="False" ><![CDATA[AIUtil("text_box", "Address").RightClick]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:22]]></Time>
+<TimeTick>1782383962</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="17" Source="Action1" SourceLine="132" >
+<Disp><![CDATA[AIUtil("text_box", "Address").RightClick]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf37.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T12">
+<Obj plainTxt="False" ><![CDATA[AIUtil("text_box", "Address").Type]]></Obj>
+<Details plainTxt="False" ><![CDATA["US90L01-09956"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:29]]></Time>
+<TimeTick>1782383969</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="19" Source="Action1" SourceLine="139" >
+<Disp><![CDATA[AIUtil("text_box", "Address").Type]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf38.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T13">
+<Obj plainTxt="False" ><![CDATA[AIUtil("button", "Active").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:33]]></Time>
+<TimeTick>1782383973</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="21" Source="Action1" SourceLine="140" >
+<Disp><![CDATA[AIUtil("button", "Active").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf39.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T14">
+<Obj ><![CDATA[Connection]]></Obj>
+<Details ><![CDATA[Connected to lane: US90L01-09956]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:38]]></Time>
+<TimeTick>1782383978</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="22" Source="Action1" SourceLine="143" >
+<Disp><![CDATA[Connection]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T15">
+<Obj plainTxt="False" ><![CDATA[AIUtil("combobox", "User ID").Type]]></Obj>
+<Details plainTxt="False" ><![CDATA["vn44j5r"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:46]]></Time>
+<TimeTick>1782383986</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="24" Source="Action1" SourceLine="151" >
+<Disp><![CDATA[AIUtil("combobox", "User ID").Type]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf40.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T16">
+<Obj plainTxt="False" ><![CDATA[AIUtil("text_box", "Password").Type]]></Obj>
+<Details plainTxt="False" ><![CDATA["Percy@26"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:49]]></Time>
+<TimeTick>1782383989</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="26" Source="Action1" SourceLine="152" >
+<Disp><![CDATA[AIUtil("text_box", "Password").Type]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf41.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T17">
+<Obj plainTxt="False" ><![CDATA[AIUtil("combobox", "Domain").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:51]]></Time>
+<TimeTick>1782383991</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="28" Source="Action1" SourceLine="153" >
+<Disp><![CDATA[AIUtil("combobox", "Domain").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf42.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T18">
+<Obj plainTxt="False" ><![CDATA[AIUtil("combobox", "Domain").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:09:56]]></Time>
+<TimeTick>1782383996</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="30" Source="Action1" SourceLine="158" >
+<Disp><![CDATA[AIUtil("combobox", "Domain").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf43.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T19">
+<Obj plainTxt="False" ><![CDATA[AIUtil("button", "Login")]]></Obj>
+<Details plainTxt="False" ><![CDATA[Verifying object identification failed. The object was no longer identified when performing the operation. 
+The step was performed but might not have the expected results.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:10:08]]></Time>
+<TimeTick>1782384008</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="31" status="Warning" Source="Action1" SourceLine="162" >
+<Disp><![CDATA[AIUtil("button", "Login")]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf44.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T20">
+<Obj plainTxt="False" ><![CDATA[AIUtil("button", "Login").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:10:09]]></Time>
+<TimeTick>1782384009</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="33" Source="Action1" SourceLine="162" >
+<Disp><![CDATA[AIUtil("button", "Login").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf45.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T21">
+<Obj ><![CDATA[Login]]></Obj>
+<Details ><![CDATA[Logged in: vn44j5r]]></Details>
+<Time><![CDATA[25-06-2026 - 16:10:13]]></Time>
+<TimeTick>1782384013</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="34" Source="Action1" SourceLine="164" >
+<Disp><![CDATA[Login]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T22">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:10:13]]></Time>
+<TimeTick>1782384013</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="36" Source="Action1" SourceLine="173" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf46.xml]]></Path>
+<ASHilite><![CDATA[2038456]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T23">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[332, 10]]></Details>
+<Time><![CDATA[25-06-2026 - 16:10:16]]></Time>
+<TimeTick>1782384016</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="38" Source="Action1" SourceLine="175" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf47.xml]]></Path>
+<ASHilite><![CDATA[2038456]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T24">
+<Obj plainTxt="False" ><![CDATA[AIUtil.FindTextBlock("Task Manager").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:10:28]]></Time>
+<TimeTick>1782384028</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="40" Source="Action1" SourceLine="185" >
+<Disp><![CDATA[AIUtil.FindTextBlock("Task Manager").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf48.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T25">
+<Obj plainTxt="False" ><![CDATA[AIUtil.FindTextBlock("File").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:10:34]]></Time>
+<TimeTick>1782384034</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="42" Source="Action1" SourceLine="187" >
+<Disp><![CDATA[AIUtil.FindTextBlock("File").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf49.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T26">
+<Obj plainTxt="False" ><![CDATA[Run Error]]></Obj>
+<Details plainTxt="False" ><![CDATA[The &quot;IBM Endpoint Manager for_2&quot;  object was not found in the Object Repository.<BR/>Check the Object Repository to confirm that the object exists or to find the correct name for the object.<BR/>Line (216): &quot;Window(&quot;IBM Endpoint Manager for_2&quot;).Click 525,11&quot;. ]]></Details>
+<Time><![CDATA[25-06-2026 - 16:11:01]]></Time>
+<TimeTick>1782384061</TimeTick>
+<NodeArgs eType="Replay" icon="8" nRep="43" status="Failed" Source="Action1" SourceLine="215" >
+<Disp><![CDATA[Run Error]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T27">
+<Obj plainTxt="False" ><![CDATA[Run Error]]></Obj>
+<Details plainTxt="False" ><![CDATA[The &quot;IBM Endpoint Manager for_2&quot;  object was not found in the Object Repository.<BR/>Check the Object Repository to confirm that the object exists or to find the correct name for the object.<BR/>Line (216): &quot;Window(&quot;IBM Endpoint Manager for_2&quot;).Click 525,11&quot;. ]]></Details>
+<Time><![CDATA[25-06-2026 - 16:11:21]]></Time>
+<TimeTick>1782384081</TimeTick>
+<NodeArgs eType="Replay" icon="8" nRep="44" status="Failed" Source="Action1" SourceLine="215" >
+<Disp><![CDATA[Run Error]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T28">
+<Obj plainTxt="False" ><![CDATA[Run Error]]></Obj>
+<Details plainTxt="False" ><![CDATA[The &quot;IBM Endpoint Manager for_2&quot;  object was not found in the Object Repository.<BR/>Check the Object Repository to confirm that the object exists or to find the correct name for the object.<BR/>Line (216): &quot;Window(&quot;IBM Endpoint Manager for_2&quot;).Click 525,11&quot;. ]]></Details>
+<Time><![CDATA[25-06-2026 - 16:11:22]]></Time>
+<TimeTick>1782384082</TimeTick>
+<NodeArgs eType="Replay" icon="8" nRep="45" status="Failed" Source="Action1" SourceLine="215" >
+<Disp><![CDATA[Run Error]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T29">
+<Obj ><![CDATA[Clipboard Saved]]></Obj>
+<Details ><![CDATA[Saved to C:\Temp\RemoteApps.txt]]></Details>
+<Time><![CDATA[25-06-2026 - 16:11:39]]></Time>
+<TimeTick>1782384099</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="46" Source="Action1" SourceLine="263" >
+<Disp><![CDATA[Clipboard Saved]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T30">
+<Obj ><![CDATA[Clipboard]]></Obj>
+<Details ><![CDATA[Remote clipboard pulled to local machine.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:11:39]]></Time>
+<TimeTick>1782384099</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="47" Source="Action1" SourceLine="227" >
+<Disp><![CDATA[Clipboard]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T31">
+<Obj ><![CDATA[PowerShell]]></Obj>
+<Details ><![CDATA[App list saved and opened in Notepad on remote.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:11:39]]></Time>
+<TimeTick>1782384099</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="48" Source="Action1" SourceLine="228" >
+<Disp><![CDATA[PowerShell]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T32">
+<Obj ><![CDATA[Timing]]></Obj>
+<Details ><![CDATA[Version Validation Started]]></Details>
+<Time><![CDATA[25-06-2026 - 16:11:39]]></Time>
+<TimeTick>1782384099</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="49" Source="Action1" SourceLine="273" >
+<Disp><![CDATA[Timing]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T33">
+<Obj ><![CDATA[Diebold Nixdorf Universal TouchDriver]]></Obj>
+<Details ><![CDATA[Expected = 2.2.14 | Actual = 2.2.14 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:14]]></Time>
+<TimeTick>1782384134</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="50" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Diebold Nixdorf Universal TouchDriver]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T34">
+<Obj ><![CDATA[BigFix Client]]></Obj>
+<Details ><![CDATA[Expected = 11.0.1.104 | Actual = 11.0.1.104 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:16]]></Time>
+<TimeTick>1782384136</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="51" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[BigFix Client]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T35">
+<Obj ><![CDATA[BigFix Remote Control - Target]]></Obj>
+<Details ><![CDATA[Expected = 10.1.0.0022 | Actual = 10.1.0.0022 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:17]]></Time>
+<TimeTick>1782384137</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="52" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[BigFix Remote Control - Target]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T36">
+<Obj ><![CDATA[Ingenico USB Drivers 3.22 (remove only)]]></Obj>
+<Details ><![CDATA[Expected = 3.22 | Actual = 3.22 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:18]]></Time>
+<TimeTick>1782384138</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="53" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Ingenico USB Drivers 3.22 (remove only)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T37">
+<Obj ><![CDATA[Microsoft POS for .NET 1.12]]></Obj>
+<Details ><![CDATA[Expected = 1.12.1296.00 | Actual = 1.12.1296.00 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:19]]></Time>
+<TimeTick>1782384139</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="54" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft POS for .NET 1.12]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T38">
+<Obj ><![CDATA[OPOS Driver for Symbol Scanners v3.31]]></Obj>
+<Details ><![CDATA[Expected = 3.31.0001 | Actual = 3.31.0001 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:21]]></Time>
+<TimeTick>1782384141</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="55" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[OPOS Driver for Symbol Scanners v3.31]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T39">
+<Obj ><![CDATA[EPSON OPOS ADK Ver3.00]]></Obj>
+<Details ><![CDATA[Expected = 3.4.0.0 | Actual = 3.4.0.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:22]]></Time>
+<TimeTick>1782384142</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="56" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[EPSON OPOS ADK Ver3.00]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T40">
+<Obj ><![CDATA[Honeywell OPOS Suite]]></Obj>
+<Details ><![CDATA[Expected = 1.14.1.1 | Actual = 1.14.1.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:24]]></Time>
+<TimeTick>1782384144</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="57" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Honeywell OPOS Suite]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T41">
+<Obj ><![CDATA[VerifoneUnifiedDriverInstaller64 Build 3]]></Obj>
+<Details ><![CDATA[Expected = 5.0.5.2 | Actual = 5.0.5.2 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:25]]></Time>
+<TimeTick>1782384145</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="58" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[VerifoneUnifiedDriverInstaller64 Build 3]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T42">
+<Obj ><![CDATA[Datalogic OPOS 1.14 Driver]]></Obj>
+<Details ><![CDATA[Expected = 1.14.153 | Actual = 1.14.153 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:26]]></Time>
+<TimeTick>1782384146</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="59" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Datalogic OPOS 1.14 Driver]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T43">
+<Obj ><![CDATA[StoreLine WinPOS]]></Obj>
+<Details ><![CDATA[Expected = 8.4.8.7608 | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:27]]></Time>
+<TimeTick>1782384147</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="60" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[StoreLine WinPOS]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T44">
+<Obj ><![CDATA[Delhaize America]]></Obj>
+<Details ><![CDATA[Expected = Connected Payments | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:28]]></Time>
+<TimeTick>1782384148</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="61" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Delhaize America]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T45">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.29.30133]]></Obj>
+<Details ><![CDATA[Expected = 14.29.30133.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:29]]></Time>
+<TimeTick>1782384149</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="62" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.29.30133]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T46">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.29.30133]]></Obj>
+<Details ><![CDATA[Expected = 14.29.30133.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:30]]></Time>
+<TimeTick>1782384150</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="63" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.29.30133]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T47">
+<Obj ><![CDATA[Retail Platform Software for Windows]]></Obj>
+<Details ><![CDATA[Expected = 5.3.6.0 | Actual = 5.3.6.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:32]]></Time>
+<TimeTick>1782384152</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="64" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Retail Platform Software for Windows]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T48">
+<Obj ><![CDATA[Rapid7 Insight Agent]]></Obj>
+<Details ><![CDATA[Expected = 4.0.9.38 | Actual = 4.1.1.55 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:33]]></Time>
+<TimeTick>1782384153</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="65" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Rapid7 Insight Agent]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T49">
+<Obj ><![CDATA[rrtQ Remote Lane Refresh Service]]></Obj>
+<Details ><![CDATA[Expected = 24.12.1.1 | Actual = 25.1.1.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:34]]></Time>
+<TimeTick>1782384154</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="66" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[rrtQ Remote Lane Refresh Service]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T50">
+<Obj ><![CDATA[Systems Management Agent]]></Obj>
+<Details ><![CDATA[Expected = 10.11.0010 | Actual = 10.11.0010 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:35]]></Time>
+<TimeTick>1782384155</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="67" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Systems Management Agent]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T51">
+<Obj ><![CDATA[AutoIt v3.3.14.2]]></Obj>
+<Details ><![CDATA[Expected = 3.3.14.2 | Actual = 3.3.14.2 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:37]]></Time>
+<TimeTick>1782384157</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="68" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[AutoIt v3.3.14.2]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T52">
+<Obj ><![CDATA[Eclipse IDE for Java Developers]]></Obj>
+<Details ><![CDATA[Expected = 4.4.1 | Actual = 4.4.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:38]]></Time>
+<TimeTick>1782384158</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="69" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Eclipse IDE for Java Developers]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T53">
+<Obj ><![CDATA[HP]]></Obj>
+<Details ><![CDATA[Expected = Unified Functional Testing | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:39]]></Time>
+<TimeTick>1782384159</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="70" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[HP]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T54">
+<Obj ><![CDATA[Microsoft Access database engine 2016 (English)]]></Obj>
+<Details ><![CDATA[Expected = 16.0.5044.1000 | Actual = 16.0.5044.1000 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:40]]></Time>
+<TimeTick>1782384160</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="71" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Access database engine 2016 (English)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T55">
+<Obj ><![CDATA[Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219]]></Obj>
+<Details ><![CDATA[Expected = 10.0.40219 | Actual = 10.0.40219 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:42]]></Time>
+<TimeTick>1782384162</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="72" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T56">
+<Obj ><![CDATA[Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219]]></Obj>
+<Details ><![CDATA[Expected = 10.0.40219 | Actual = 10.0.40219 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:43]]></Time>
+<TimeTick>1782384163</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="73" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T57">
+<Obj ><![CDATA[Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.60610]]></Obj>
+<Details ><![CDATA[Expected = 11.0.60610.1 | Actual = 11.0.60610.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:45]]></Time>
+<TimeTick>1782384165</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="74" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.60610]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T58">
+<Obj ><![CDATA[Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.60610]]></Obj>
+<Details ><![CDATA[Expected = 11.0.60610.1 | Actual = 11.0.60610.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:46]]></Time>
+<TimeTick>1782384166</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="75" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.60610]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T59">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.36.32532]]></Obj>
+<Details ><![CDATA[Expected = 14.36.32532.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:48]]></Time>
+<TimeTick>1782384168</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="76" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.36.32532]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T60">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.36.32532]]></Obj>
+<Details ><![CDATA[Expected = 14.36.32532.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:50]]></Time>
+<TimeTick>1782384170</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="77" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.36.32532]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T61">
+<Obj ><![CDATA[Microsoft Corporation]]></Obj>
+<Details ><![CDATA[Expected = Microsoft .NET Framework 4.8 | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:50]]></Time>
+<TimeTick>1782384170</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="78" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Corporation]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T62">
+<Obj ><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x86)]]></Obj>
+<Details ><![CDATA[Expected = 6.0.3.31024 | Actual = 6.0.3.31024 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:52]]></Time>
+<TimeTick>1782384172</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="79" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x86)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T63">
+<Obj ><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x64)]]></Obj>
+<Details ><![CDATA[Expected = 6.0.3.31024 | Actual = 6.0.3.31024 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:53]]></Time>
+<TimeTick>1782384173</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="80" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x64)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T64">
+<Obj ><![CDATA[Microsoft WSE 2.0 SP3 Runtime]]></Obj>
+<Details ><![CDATA[Expected = 2.0.5050.0 | Actual = 2.0.5050.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:55]]></Time>
+<TimeTick>1782384175</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="81" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft WSE 2.0 SP3 Runtime]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T65">
+<Obj ><![CDATA[Microsoft WSE 3.0 Runtime]]></Obj>
+<Details ><![CDATA[Expected = 3.0.5305.0 | Actual = 3.0.5305.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:56]]></Time>
+<TimeTick>1782384176</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="82" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft WSE 3.0 Runtime]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T66">
+<Obj ><![CDATA[VS Script Debugging Common]]></Obj>
+<Details ><![CDATA[Expected = 16.0.58.0 | Actual = 16.0.58.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:58]]></Time>
+<TimeTick>1782384178</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="83" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[VS Script Debugging Common]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T67">
+<Obj ><![CDATA[Accelerated and Continuous Automation Intel-Engine]]></Obj>
+<Details ><![CDATA[Expected = 2.0 | Actual = 2.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:12:59]]></Time>
+<TimeTick>1782384179</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="84" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Accelerated and Continuous Automation Intel-Engine]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T68">
+<Obj ><![CDATA[Java 8 Update 221]]></Obj>
+<Details ><![CDATA[Expected = 8 | Actual = 8.0.2210.11 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:00]]></Time>
+<TimeTick>1782384180</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="85" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Java 8 Update 221]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T69">
+<Obj ><![CDATA[Total Timing]]></Obj>
+<Details ><![CDATA[Total Time = 81.7 seconds]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:00]]></Time>
+<TimeTick>1782384180</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="86" Source="Action1" SourceLine="420" >
+<Disp><![CDATA[Total Timing]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T70">
+<Obj ><![CDATA[Version Validation]]></Obj>
+<Details ><![CDATA[Completed Successfully]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:01]]></Time>
+<TimeTick>1782384181</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="87" Source="Action1" SourceLine="424" >
+<Disp><![CDATA[Version Validation]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T71">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:01]]></Time>
+<TimeTick>1782384181</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="89" Source="Action1" SourceLine="487" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf50.xml]]></Path>
+<ASHilite><![CDATA[2038456]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T72">
+<Obj plainTxt="False" ><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:04]]></Time>
+<TimeTick>1782384184</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="91" Source="Action1" SourceLine="490" >
+<Disp><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf51.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T73">
+<Obj plainTxt="False" ><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:08]]></Time>
+<TimeTick>1782384188</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="93" Source="Action1" SourceLine="493" >
+<Disp><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf52.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T74">
+<Obj plainTxt="False" ><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:11]]></Time>
+<TimeTick>1782384191</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="95" Source="Action1" SourceLine="496" >
+<Disp><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf53.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T75">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Exist]]></Obj>
+<Details plainTxt="False" ><![CDATA["Object exists"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:13]]></Time>
+<TimeTick>1782384193</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="96" Source="Action1" SourceLine="499" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Exist]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf54.xml]]></Path>
+<ASHilite><![CDATA[2038456]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T76">
+<Obj ><![CDATA[Lane Completed]]></Obj>
+<Details ><![CDATA[US90L01-09956]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:19]]></Time>
+<TimeTick>1782384199</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="97" Source="Action1" SourceLine="71" >
+<Disp><![CDATA[Lane Completed]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T77">
+<Obj ><![CDATA[Lane Start]]></Obj>
+<Details ><![CDATA[US90L01-09956]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:19]]></Time>
+<TimeTick>1782384199</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="98" Source="Action1" SourceLine="40" >
+<Disp><![CDATA[Lane Start]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T78">
+<Obj plainTxt="False" ><![CDATA[AIUtil.SetContext]]></Obj>
+<Details plainTxt="False" ><![CDATA[Set context Window("[ IBM Endpoint Manager for Remote Control ]") for AIUtil]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:27]]></Time>
+<TimeTick>1782384207</TimeTick>
+<NodeArgs eType="Replay" icon="0" nRep="99" nType="AIUtil" Source="Action1" SourceLine="54" >
+<Disp><![CDATA[AIUtil.SetContext]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T79">
+<Obj plainTxt="False" ><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:28]]></Time>
+<TimeTick>1782384208</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="101" Source="Action1" SourceLine="128" >
+<Disp><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf55.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T80">
+<Obj plainTxt="False" ><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:33]]></Time>
+<TimeTick>1782384213</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="103" Source="Action1" SourceLine="130" >
+<Disp><![CDATA[AIUtil("down_triangle", micAnyText, micFromTop, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf56.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T81">
+<Obj plainTxt="False" ><![CDATA[AIUtil("text_box", "Address").RightClick]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:34]]></Time>
+<TimeTick>1782384214</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="105" Source="Action1" SourceLine="132" >
+<Disp><![CDATA[AIUtil("text_box", "Address").RightClick]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf57.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T82">
+<Obj plainTxt="False" ><![CDATA[AIUtil("text_box", "Address").Type]]></Obj>
+<Details plainTxt="False" ><![CDATA["US90L01-09956"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:41]]></Time>
+<TimeTick>1782384221</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="107" Source="Action1" SourceLine="139" >
+<Disp><![CDATA[AIUtil("text_box", "Address").Type]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf58.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T83">
+<Obj plainTxt="False" ><![CDATA[AIUtil("button", "Active")]]></Obj>
+<Details plainTxt="False" ><![CDATA[Verifying object identification failed. The object was no longer identified when performing the operation. 
+The step was performed but might not have the expected results.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:48]]></Time>
+<TimeTick>1782384228</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="108" status="Warning" Source="Action1" SourceLine="140" >
+<Disp><![CDATA[AIUtil("button", "Active")]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf59.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T84">
+<Obj plainTxt="False" ><![CDATA[AIUtil("button", "Active").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:49]]></Time>
+<TimeTick>1782384229</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="110" Source="Action1" SourceLine="140" >
+<Disp><![CDATA[AIUtil("button", "Active").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf60.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T85">
+<Obj ><![CDATA[Connection]]></Obj>
+<Details ><![CDATA[Connected to lane: US90L01-09956]]></Details>
+<Time><![CDATA[25-06-2026 - 16:13:54]]></Time>
+<TimeTick>1782384234</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="111" Source="Action1" SourceLine="143" >
+<Disp><![CDATA[Connection]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T86">
+<Obj plainTxt="False" ><![CDATA[AIUtil("combobox", "User ID").Type]]></Obj>
+<Details plainTxt="False" ><![CDATA["vn44j5r"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:00]]></Time>
+<TimeTick>1782384240</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="113" Source="Action1" SourceLine="151" >
+<Disp><![CDATA[AIUtil("combobox", "User ID").Type]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf61.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T87">
+<Obj plainTxt="False" ><![CDATA[AIUtil("text_box", "Password").Type]]></Obj>
+<Details plainTxt="False" ><![CDATA["Percy@26"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:02]]></Time>
+<TimeTick>1782384242</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="115" Source="Action1" SourceLine="152" >
+<Disp><![CDATA[AIUtil("text_box", "Password").Type]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf62.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T88">
+<Obj plainTxt="False" ><![CDATA[AIUtil("combobox", "Domain").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:04]]></Time>
+<TimeTick>1782384244</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="117" Source="Action1" SourceLine="153" >
+<Disp><![CDATA[AIUtil("combobox", "Domain").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf63.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T89">
+<Obj plainTxt="False" ><![CDATA[AIUtil("combobox", "Domain").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:09]]></Time>
+<TimeTick>1782384249</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="119" Source="Action1" SourceLine="158" >
+<Disp><![CDATA[AIUtil("combobox", "Domain").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf64.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T90">
+<Obj plainTxt="False" ><![CDATA[AIUtil("button", "Login")]]></Obj>
+<Details plainTxt="False" ><![CDATA[Verifying object identification failed. The object was no longer identified when performing the operation. 
+The step was performed but might not have the expected results.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:22]]></Time>
+<TimeTick>1782384262</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="120" status="Warning" Source="Action1" SourceLine="162" >
+<Disp><![CDATA[AIUtil("button", "Login")]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf65.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T91">
+<Obj plainTxt="False" ><![CDATA[AIUtil("button", "Login").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:23]]></Time>
+<TimeTick>1782384263</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="122" Source="Action1" SourceLine="162" >
+<Disp><![CDATA[AIUtil("button", "Login").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf66.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T92">
+<Obj ><![CDATA[Login]]></Obj>
+<Details ><![CDATA[Logged in: vn44j5r]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:27]]></Time>
+<TimeTick>1782384267</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="123" Source="Action1" SourceLine="164" >
+<Disp><![CDATA[Login]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T93">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:27]]></Time>
+<TimeTick>1782384267</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="125" Source="Action1" SourceLine="173" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf67.xml]]></Path>
+<ASHilite><![CDATA[2103992]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T94">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[332, 10]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:30]]></Time>
+<TimeTick>1782384270</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="127" Source="Action1" SourceLine="175" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf68.xml]]></Path>
+<ASHilite><![CDATA[2103992]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T95">
+<Obj plainTxt="False" ><![CDATA[AIUtil.FindTextBlock("Task Manager").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:43]]></Time>
+<TimeTick>1782384283</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="129" Source="Action1" SourceLine="185" >
+<Disp><![CDATA[AIUtil.FindTextBlock("Task Manager").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf69.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T96">
+<Obj plainTxt="False" ><![CDATA[AIUtil.FindTextBlock("File").Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:14:48]]></Time>
+<TimeTick>1782384288</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="131" Source="Action1" SourceLine="187" >
+<Disp><![CDATA[AIUtil.FindTextBlock("File").Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf70.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T97">
+<Obj plainTxt="False" ><![CDATA[Run Error]]></Obj>
+<Details plainTxt="False" ><![CDATA[The &quot;IBM Endpoint Manager for_2&quot;  object was not found in the Object Repository.<BR/>Check the Object Repository to confirm that the object exists or to find the correct name for the object.<BR/>Line (216): &quot;Window(&quot;IBM Endpoint Manager for_2&quot;).Click 525,11&quot;. ]]></Details>
+<Time><![CDATA[25-06-2026 - 16:15:16]]></Time>
+<TimeTick>1782384316</TimeTick>
+<NodeArgs eType="Replay" icon="8" nRep="132" status="Failed" Source="Action1" SourceLine="215" >
+<Disp><![CDATA[Run Error]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T98">
+<Obj ><![CDATA[Clipboard Saved]]></Obj>
+<Details ><![CDATA[Saved to C:\Temp\RemoteApps.txt]]></Details>
+<Time><![CDATA[25-06-2026 - 16:15:30]]></Time>
+<TimeTick>1782384330</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="133" Source="Action1" SourceLine="263" >
+<Disp><![CDATA[Clipboard Saved]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T99">
+<Obj ><![CDATA[Clipboard]]></Obj>
+<Details ><![CDATA[Remote clipboard pulled to local machine.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:15:30]]></Time>
+<TimeTick>1782384330</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="134" Source="Action1" SourceLine="227" >
+<Disp><![CDATA[Clipboard]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T100">
+<Obj ><![CDATA[PowerShell]]></Obj>
+<Details ><![CDATA[App list saved and opened in Notepad on remote.]]></Details>
+<Time><![CDATA[25-06-2026 - 16:15:30]]></Time>
+<TimeTick>1782384330</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="135" Source="Action1" SourceLine="228" >
+<Disp><![CDATA[PowerShell]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T101">
+<Obj ><![CDATA[Timing]]></Obj>
+<Details ><![CDATA[Version Validation Started]]></Details>
+<Time><![CDATA[25-06-2026 - 16:15:30]]></Time>
+<TimeTick>1782384330</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="136" Source="Action1" SourceLine="273" >
+<Disp><![CDATA[Timing]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T102">
+<Obj ><![CDATA[Diebold Nixdorf Universal TouchDriver]]></Obj>
+<Details ><![CDATA[Expected = 2.2.14 | Actual = 2.2.14 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:04]]></Time>
+<TimeTick>1782384364</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="137" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Diebold Nixdorf Universal TouchDriver]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T103">
+<Obj ><![CDATA[BigFix Client]]></Obj>
+<Details ><![CDATA[Expected = 11.0.1.104 | Actual = 11.0.1.104 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:05]]></Time>
+<TimeTick>1782384365</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="138" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[BigFix Client]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T104">
+<Obj ><![CDATA[BigFix Remote Control - Target]]></Obj>
+<Details ><![CDATA[Expected = 10.1.0.0022 | Actual = 10.1.0.0022 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:07]]></Time>
+<TimeTick>1782384367</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="139" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[BigFix Remote Control - Target]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T105">
+<Obj ><![CDATA[Ingenico USB Drivers 3.22 (remove only)]]></Obj>
+<Details ><![CDATA[Expected = 3.22 | Actual = 3.22 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:08]]></Time>
+<TimeTick>1782384368</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="140" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Ingenico USB Drivers 3.22 (remove only)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T106">
+<Obj ><![CDATA[Microsoft POS for .NET 1.12]]></Obj>
+<Details ><![CDATA[Expected = 1.12.1296.00 | Actual = 1.12.1296.00 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:09]]></Time>
+<TimeTick>1782384369</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="141" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft POS for .NET 1.12]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T107">
+<Obj ><![CDATA[OPOS Driver for Symbol Scanners v3.31]]></Obj>
+<Details ><![CDATA[Expected = 3.31.0001 | Actual = 3.31.0001 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:10]]></Time>
+<TimeTick>1782384370</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="142" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[OPOS Driver for Symbol Scanners v3.31]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T108">
+<Obj ><![CDATA[EPSON OPOS ADK Ver3.00]]></Obj>
+<Details ><![CDATA[Expected = 3.4.0.0 | Actual = 3.4.0.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:12]]></Time>
+<TimeTick>1782384372</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="143" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[EPSON OPOS ADK Ver3.00]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T109">
+<Obj ><![CDATA[Honeywell OPOS Suite]]></Obj>
+<Details ><![CDATA[Expected = 1.14.1.1 | Actual = 1.14.1.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:13]]></Time>
+<TimeTick>1782384373</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="144" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Honeywell OPOS Suite]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T110">
+<Obj ><![CDATA[VerifoneUnifiedDriverInstaller64 Build 3]]></Obj>
+<Details ><![CDATA[Expected = 5.0.5.2 | Actual = 5.0.5.2 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:15]]></Time>
+<TimeTick>1782384375</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="145" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[VerifoneUnifiedDriverInstaller64 Build 3]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T111">
+<Obj ><![CDATA[Datalogic OPOS 1.14 Driver]]></Obj>
+<Details ><![CDATA[Expected = 1.14.153 | Actual = 1.14.153 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:16]]></Time>
+<TimeTick>1782384376</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="146" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Datalogic OPOS 1.14 Driver]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T112">
+<Obj ><![CDATA[StoreLine WinPOS]]></Obj>
+<Details ><![CDATA[Expected = 8.4.8.7608 | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:17]]></Time>
+<TimeTick>1782384377</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="147" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[StoreLine WinPOS]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T113">
+<Obj ><![CDATA[Delhaize America]]></Obj>
+<Details ><![CDATA[Expected = Connected Payments | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:17]]></Time>
+<TimeTick>1782384377</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="148" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Delhaize America]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T114">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.29.30133]]></Obj>
+<Details ><![CDATA[Expected = 14.29.30133.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:18]]></Time>
+<TimeTick>1782384378</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="149" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.29.30133]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T115">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.29.30133]]></Obj>
+<Details ><![CDATA[Expected = 14.29.30133.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:20]]></Time>
+<TimeTick>1782384380</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="150" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.29.30133]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T116">
+<Obj ><![CDATA[Retail Platform Software for Windows]]></Obj>
+<Details ><![CDATA[Expected = 5.3.6.0 | Actual = 5.3.6.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:21]]></Time>
+<TimeTick>1782384381</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="151" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Retail Platform Software for Windows]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T117">
+<Obj ><![CDATA[Rapid7 Insight Agent]]></Obj>
+<Details ><![CDATA[Expected = 4.0.9.38 | Actual = 4.1.1.55 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:22]]></Time>
+<TimeTick>1782384382</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="152" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Rapid7 Insight Agent]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T118">
+<Obj ><![CDATA[rrtQ Remote Lane Refresh Service]]></Obj>
+<Details ><![CDATA[Expected = 24.12.1.1 | Actual = 25.1.1.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:23]]></Time>
+<TimeTick>1782384383</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="153" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[rrtQ Remote Lane Refresh Service]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T119">
+<Obj ><![CDATA[Systems Management Agent]]></Obj>
+<Details ><![CDATA[Expected = 10.11.0010 | Actual = 10.11.0010 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:25]]></Time>
+<TimeTick>1782384385</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="154" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Systems Management Agent]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T120">
+<Obj ><![CDATA[AutoIt v3.3.14.2]]></Obj>
+<Details ><![CDATA[Expected = 3.3.14.2 | Actual = 3.3.14.2 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:26]]></Time>
+<TimeTick>1782384386</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="155" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[AutoIt v3.3.14.2]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T121">
+<Obj ><![CDATA[Eclipse IDE for Java Developers]]></Obj>
+<Details ><![CDATA[Expected = 4.4.1 | Actual = 4.4.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:27]]></Time>
+<TimeTick>1782384387</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="156" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Eclipse IDE for Java Developers]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T122">
+<Obj ><![CDATA[HP]]></Obj>
+<Details ><![CDATA[Expected = Unified Functional Testing | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:28]]></Time>
+<TimeTick>1782384388</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="157" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[HP]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T123">
+<Obj ><![CDATA[Microsoft Access database engine 2016 (English)]]></Obj>
+<Details ><![CDATA[Expected = 16.0.5044.1000 | Actual = 16.0.5044.1000 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:29]]></Time>
+<TimeTick>1782384389</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="158" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Access database engine 2016 (English)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T124">
+<Obj ><![CDATA[Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219]]></Obj>
+<Details ><![CDATA[Expected = 10.0.40219 | Actual = 10.0.40219 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:31]]></Time>
+<TimeTick>1782384391</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="159" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T125">
+<Obj ><![CDATA[Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219]]></Obj>
+<Details ><![CDATA[Expected = 10.0.40219 | Actual = 10.0.40219 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:32]]></Time>
+<TimeTick>1782384392</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="160" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T126">
+<Obj ><![CDATA[Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.60610]]></Obj>
+<Details ><![CDATA[Expected = 11.0.60610.1 | Actual = 11.0.60610.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:34]]></Time>
+<TimeTick>1782384394</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="161" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.60610]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T127">
+<Obj ><![CDATA[Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.60610]]></Obj>
+<Details ><![CDATA[Expected = 11.0.60610.1 | Actual = 11.0.60610.1 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:35]]></Time>
+<TimeTick>1782384395</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="162" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.60610]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T128">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.36.32532]]></Obj>
+<Details ><![CDATA[Expected = 14.36.32532.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:37]]></Time>
+<TimeTick>1782384397</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="163" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.36.32532]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T129">
+<Obj ><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.36.32532]]></Obj>
+<Details ><![CDATA[Expected = 14.36.32532.0 | Actual = 14.36.32532.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:39]]></Time>
+<TimeTick>1782384399</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="164" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.36.32532]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T130">
+<Obj ><![CDATA[Microsoft Corporation]]></Obj>
+<Details ><![CDATA[Expected = Microsoft .NET Framework 4.8 | Actual = NOT FOUND | Result = FAIL]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:39]]></Time>
+<TimeTick>1782384399</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="165" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Corporation]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T131">
+<Obj ><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x86)]]></Obj>
+<Details ><![CDATA[Expected = 6.0.3.31024 | Actual = 6.0.3.31024 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:41]]></Time>
+<TimeTick>1782384401</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="166" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x86)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T132">
+<Obj ><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x64)]]></Obj>
+<Details ><![CDATA[Expected = 6.0.3.31024 | Actual = 6.0.3.31024 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:43]]></Time>
+<TimeTick>1782384403</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="167" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft Windows Desktop Runtime - 6.0.3 (x64)]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T133">
+<Obj ><![CDATA[Microsoft WSE 2.0 SP3 Runtime]]></Obj>
+<Details ><![CDATA[Expected = 2.0.5050.0 | Actual = 2.0.5050.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:44]]></Time>
+<TimeTick>1782384404</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="168" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft WSE 2.0 SP3 Runtime]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T134">
+<Obj ><![CDATA[Microsoft WSE 3.0 Runtime]]></Obj>
+<Details ><![CDATA[Expected = 3.0.5305.0 | Actual = 3.0.5305.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:46]]></Time>
+<TimeTick>1782384406</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="169" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Microsoft WSE 3.0 Runtime]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T135">
+<Obj ><![CDATA[VS Script Debugging Common]]></Obj>
+<Details ><![CDATA[Expected = 16.0.58.0 | Actual = 16.0.58.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:48]]></Time>
+<TimeTick>1782384408</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="170" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[VS Script Debugging Common]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T136">
+<Obj ><![CDATA[Accelerated and Continuous Automation Intel-Engine]]></Obj>
+<Details ><![CDATA[Expected = 2.0 | Actual = 2.0 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:49]]></Time>
+<TimeTick>1782384409</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="171" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Accelerated and Continuous Automation Intel-Engine]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T137">
+<Obj ><![CDATA[Java 8 Update 221]]></Obj>
+<Details ><![CDATA[Expected = 8 | Actual = 8.0.2210.11 | Result = PASS]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:50]]></Time>
+<TimeTick>1782384410</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="172" Source="Action1" SourceLine="411" >
+<Disp><![CDATA[Java 8 Update 221]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T138">
+<Obj ><![CDATA[Total Timing]]></Obj>
+<Details ><![CDATA[Total Time = 80.68 seconds]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:50]]></Time>
+<TimeTick>1782384410</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="173" Source="Action1" SourceLine="420" >
+<Disp><![CDATA[Total Timing]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T139">
+<Obj ><![CDATA[Version Validation]]></Obj>
+<Details ><![CDATA[Completed Successfully]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:50]]></Time>
+<TimeTick>1782384410</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="174" Source="Action1" SourceLine="424" >
+<Disp><![CDATA[Version Validation]]></Disp>
+</NodeArgs>
+</Step>
+<Step rID="T140">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:51]]></Time>
+<TimeTick>1782384411</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="176" Source="Action1" SourceLine="487" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Activate]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf71.xml]]></Path>
+<ASHilite><![CDATA[2103992]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T141">
+<Obj plainTxt="False" ><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:55]]></Time>
+<TimeTick>1782384415</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="178" Source="Action1" SourceLine="490" >
+<Disp><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf72.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T142">
+<Obj plainTxt="False" ><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:16:59]]></Time>
+<TimeTick>1782384419</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="180" Source="Action1" SourceLine="493" >
+<Disp><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf73.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T143">
+<Obj plainTxt="False" ><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Obj>
+<Details plainTxt="False" ><![CDATA[]]></Details>
+<Time><![CDATA[25-06-2026 - 16:17:03]]></Time>
+<TimeTick>1782384423</TimeTick>
+<NodeArgs eType="Replay" icon="6" nRep="182" Source="Action1" SourceLine="496" >
+<Disp><![CDATA[AIUtil("close", micAnyText, micFromBottom, 1).Click]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf74.xml]]></Path>
+<ASHilite><![CDATA[-1]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T144">
+<Obj plainTxt="False" ><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Exist]]></Obj>
+<Details plainTxt="False" ><![CDATA["Object exists"]]></Details>
+<Time><![CDATA[25-06-2026 - 16:17:05]]></Time>
+<TimeTick>1782384425</TimeTick>
+<NodeArgs eType="Replay" icon="7" nRep="183" Source="Action1" SourceLine="499" >
+<Disp><![CDATA[[ IBM Endpoint Manager for Remote Control  (US90L01-09956)  ].Exist]]></Disp>
+<BtmPane vType="ViewerGen.SSViewerGen" >
+<Path><![CDATA[ZIP::Act1\Row0\ssf75.xml]]></Path>
+<ASHilite><![CDATA[2103992]]></ASHilite>
+</BtmPane>
+</NodeArgs>
+</Step>
+<Step rID="T145">
+<Obj ><![CDATA[Lane Completed]]></Obj>
+<Details ><![CDATA[US90L01-09956]]></Details>
+<Time><![CDATA[25-06-2026 - 16:17:10]]></Time>
+<TimeTick>1782384430</TimeTick>
+<NodeArgs eType="User" icon="5" nRep="184" Source="Action1" SourceLine="71" >
+<Disp><![CDATA[Lane Completed]]></Disp>
+</NodeArgs>
+</Step>
+<Summary sTime="25-06-2026 - 16:08:57" eTime="25-06-2026 - 16:17:11" passed="0" failed="4" warnings="3" ></Summary>
+<NodeArgs eType="StartAction" icon="4" nRep="8" status="Failed" >
+<Disp><![CDATA[Action1 Summary]]></Disp>
+</NodeArgs>
+</Action>
+<NodeArgs eType="StartIteration" icon="3" nRep="7" status="Failed" >
+<Disp><![CDATA[Lanes_VersionValidation Iteration 1 (Row 1)]]></Disp>
+</NodeArgs>
+</DIter>
+<Summary sTime="25-06-2026 - 16:08:54" eTime="25-06-2026 - 16:17:11" passed="0" failed="4" warnings="4" ></Summary>
+<NodeArgs eType="StartTest" icon="1" nRep="3" status="Failed" >
+<Disp><![CDATA[Test Lanes_VersionValidation Summary]]></Disp>
+</NodeArgs>
+</Doc>
+</Report>

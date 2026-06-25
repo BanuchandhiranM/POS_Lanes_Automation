@@ -6,7 +6,7 @@ Dim WshShell
 Set WshShell = CreateObject("WScript.Shell")
 
 Dim excelPath
-excelPath = "C:\Users\BanuchandhiranM\Lanes\POS_Lanes_TestData.xlsx"   '--> Change path as per local setup
+excelPath = "C:\Users\BanuchandhiranM\Git\POS_Lanes_Automation\POS_Lanes_TestData.xlsx"   '--> Change path as per local setup
 
 Dim laneAddress
 Dim userId
@@ -47,22 +47,9 @@ Dim workbook
 Dim sheet
 Dim data
 
-'===========================================================================
-' CLEANUP & LAUNCH
-'===========================================================================
 
-SystemUtil.CloseProcessByName "javaw.exe"
-SystemUtil.CloseProcessByName "java.exe"
-SystemUtil.CloseProcessByName "excel.exe"
-
-Wait 2
-
-WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False	'--> Change path as per local setup
-
-Wait 10
-
-AIUtil.SetContext Window("regexpwndtitle:=IBM Endpoint Manager.*", "regexpwndclass:=SunAwtFrame")
-
+SystemUtil.CloseProcessByName "EXCEL.EXE"
+Wait 1
 '================================================
 ' READ TEST DATA
 '================================================
@@ -72,25 +59,15 @@ Set sheet = workbook.Sheets("CashFlow")
 
 '------Create Dictionary------
 Set data = CreateObject("Scripting.Dictionary")
-row = 2   ' Start from row 2 (skip header
+row = 2   ' Start from row 2 (skip header)
 Do While sheet.Cells(row, 1).Value <> ""
     key = Trim(sheet.Cells(row, 1).Value)
     value = sheet.Cells(row, 2).Value
     data.Add key, value
     row = row + 1
 Loop
-'------Close Excel------
-workbook.Close False
-excel.Quit
-Set sheet		= Nothing
-Set workbook	= Nothing
-Set excel 		= Nothing
 
 '------Assign Variables------
-laneAddress				= data("laneAddress")
-userId					= data("userId")
-userPassword			= data("userPassword")
-domainName			= data("domainName")
 userCode				= data("userCode")
 securityCode			= data("securityCode")
 priceOverLimit_1		= data("priceOverLimit_1")
@@ -108,6 +85,7 @@ couponType			= data("couponType")
 couponName			= data("couponName")
 couponAmount			= data("couponAmount")
 totalButton				= data("totalButton")
+
 '------Convert Array String to Actual Array------
 rawArray = data("departmentArray")
 cleanStr = Replace(rawArray, "Array(", "")
@@ -115,51 +93,107 @@ cleanStr = Replace(cleanStr, ")", "")
 cleanStr = Replace(cleanStr, """", "")
 departmentArray = Split(cleanStr, ",")
 
+Call ReadLoginData(workbook, laneAddress, userId, userPassword, domainName)
+
 '===========================================================================
 ' MAIN FLOW
 '===========================================================================
-Call initializeWordDocument()
-Call openConnection(laneAddress)
-Call userAuthenticate(userId, userPassword, domainName)
-Call TakeScreenshotToWord ("After User Authentication")
+Set laneSheet = workbook.Sheets("Lanes")
 
-Call signOn(userCode, securityCode)
-Call TakeScreenshotToWord ("After Sign On")
-Call productCheckin(departmentArray, iterator, miscButton, departmentButton, dobForTobacco, priceBelowLimit, tabaccoPriceOverLimit, tabaccoActualPrice, priceOverLimit_1, actualPrice_1, priceOverLimit_2, actualPrice_2)
+lastRow = laneSheet.Cells(laneSheet.Rows.Count,1).End(-4162).Row
+
+For r = 2 To lastRow
+
+Reporter.ReportEvent micDone, _
+	    "Lane - " & laneAddress & " - Start", _
+	   "Lane - " & laneAddress
+
+SystemUtil.CloseProcessByName "javaw.exe"
+SystemUtil.CloseProcessByName "java.exe"
+
+Wait 2
+
+WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False	'--> Change path as per local setup
+
+Wait 10
+
+AIUtil.SetContext Window("regexpwndtitle:=IBM Endpoint Manager.*", "regexpwndclass:=SunAwtFrame")
+
+    laneAddress = Trim(laneSheet.Cells(r,1).Value)
+
+    If laneAddress <> "" Then
+
+        Call initializeWordDocument(laneAddress)
+
+        Call openConnection(laneAddress)
+        
+        Call userAuthenticate(userId, userPassword, domainName)
+        
+        Call TakeScreenshotToWord ("After User Authentication")
+        
+        Call signOn(userCode, securityCode)
+        
+        Call TakeScreenshotToWord ("After Sign On")
+        
+        Call productCheckin(departmentArray, iterator, miscButton, departmentButton, dobForTobacco, priceBelowLimit, tabaccoPriceOverLimit, tabaccoActualPrice, priceOverLimit_1, actualPrice_1, priceOverLimit_2, actualPrice_2)
 
 couponName = GetCouponForDepartment(departmentArray)
 
 If couponName <> "" Then
 
-    Call discountOnProduct(creditButton, couponType, couponName, couponAmount)
+	Call discountOnProduct(creditButton, couponType, couponName, couponAmount)
 
 Else
 
-    Reporter.ReportEvent micDone, _
-        "Coupon Flow", _
-        "No eligible department found. Coupon skipped."
+    Reporter.ReportEvent micDone, "Coupon Flow", "No eligible department found. Coupon skipped."
 
 End If
 
-Call productCheckout(totalButton) 
-Call finalProductCheckout()
-Call takeScreenshotToWord("End")
-Call closeConsole()
-Call finalizeWordDocument()
+	Call productCheckout(totalButton) 
+	
+	Call finalProductCheckout()
+	
+	Call takeScreenshotToWord("End")
+	
+	Call closeConsole()
+	
+	Call finalizeWordDocument(laneAddress)
+	
+Reporter.ReportEvent micDone, _
+    "Lane - " & laneAddress & " Completed", _
+   "Lane - " & laneAddress & " completed successfully."
+
+	
+	 End If
+
+Next
+
+workbook.Close False
+excel.Quit
+
+Set sheet = Nothing
+Set workbook = Nothing
+Set excel = Nothing
+
+
+
+'-----------------------------------------------------------------------------------------------------------------------------------
 
 '================================================
 ' INITIALIZE WORD DOCUMENT
 '================================================
-Function initializeWordDocument()
+Function initializeWordDocument(laneAddress)
 
     Set objWord = CreateObject("Word.Application")
     objWord.Visible = True
 
     Set objDoc = objWord.Documents.Add()
 
-    objDoc.Content.InsertAfter "POS Cash Flow Transaction - Test Evidence"
+
+    objDoc.Content.InsertAfter "POS Cash Flow Transaction - Test Evidence :"& laneAddress
     objDoc.Content.InsertParagraphAfter
     objDoc.Content.InsertAfter "Execution Date : " & Date
+    objDoc.Content.InsertParagraphAfter
    objDoc.Content.InsertAfter "Execution Time : " & Hour(Now) & ":" & Minute(Now)
     objDoc.Content.InsertParagraphAfter
     objDoc.Content.InsertParagraphAfter
@@ -168,11 +202,17 @@ End Function
 '================================================
 ' SAVE AND CLOSE WORD DOCUMENT
 '================================================
-Function finalizeWordDocument()
+Function finalizeWordDocument(laneAddress)
 
-    savePath = "C:\Users\BanuchandhiranM\Lanes\CashFlow_" & _
-           Day(Now) & "_" & Hour(Now) & Minute(Now) & ".docx"                 '-------------change the path 
+Dim safeLane
 
+safeLane = Trim(laneAddress)
+
+savePath = "C:\Users\BanuchandhiranM\Lanes\CashFlow_" & _
+           safeLane & "_" & _
+           Year(Now) & Month(Now) & Day(Now) & "_" & _
+           Hour(Now) & Minute(Now) & Second(Now) & _
+           ".docx"
     'MsgBox savePath
 
     objDoc.SaveAs savePath
@@ -181,7 +221,7 @@ Function finalizeWordDocument()
 
     Set objDoc = Nothing
     Set objWord = Nothing
-
+    
 End Function
 
 '================================================
@@ -375,8 +415,10 @@ Else
                      AIUtil.FindTextBlock(dept).Click
                      wait(2)
                      Call priceBelowLimitCheck(priceBelowLimit, dept)
+                      wait(2)
                      AIUtil.FindTextBlock(dept).Click
                      Call priceOverLimitCheck(priceOverLimit_1, dept)
+                      wait(2)
                         AIUtil.FindTextBlock(dept).Click
                         Call setActualPrice(actualPrice_1, dept)
                 End If
@@ -567,3 +609,36 @@ Function GetCouponForDepartment(departmentArray)
     Next
 
 End Function
+Function ReadLoginData(workbook, ByRef laneAddress, ByRef userId, ByRef userPassword, ByRef domainName)
+	
+	    
+	    Dim objLoginSheet
+	    Dim lastRow
+	    Dim i
+	    Dim paramName
+	    Dim paramValue
+	
+	    
+	    Set objLoginSheet    = workbook.Sheets("LoginData")
+	
+	    lastRow = objLoginSheet.UsedRange.Rows.Count
+	
+	      For i = 2 To lastRow
+	
+	        paramName  = Trim(objLoginSheet.Cells(i, 1).Value)
+	        paramValue = Trim(objLoginSheet.Cells(i, 2).Value)
+	
+	        Select Case LCase(paramName)
+	           ' Case "laneaddress"  : laneAddress  = paramValue
+	            Case "userid"       		: userId        = paramValue
+	            Case "userpassword" : userPassword  = paramValue
+	            Case "domainname"   : domainName    = paramValue
+	        End Select
+	
+	    Next
+	
+	    	
+	    Reporter.ReportEvent micDone, "LoginData", _
+	        "Lane: " & laneAddress & " | User: " & userId & " | Domain: " & domainName
+	
+	End Function'

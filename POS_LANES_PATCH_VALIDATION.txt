@@ -5,73 +5,127 @@
 Dim WshShell
 Set WshShell = CreateObject("WScript.Shell")
 
+'--- Read from Excel 
 Dim excelPath
-excelPath = "C:\Users\BanuchandhiranM\Lanes\POS_Lanes_TestData.xlsx"			'---> change the path as per the local 
+excelPath ="C:\Users\BanuchandhiranM\Git\POS_Lanes_Automation\POS_Lanes_TestData.xlsx"	'--> Change path as per local setup
 
 Dim laneAddress, userId, userPassword, domainName
-Call ReadLoginData(excelPath, laneAddress, userId, userPassword, domainName)
+	
+Dim objExcel
+Dim objWorkbook
 
-' CLEANUP & LAUNCH
-SystemUtil.CloseProcessByName "javaw.exe"
-SystemUtil.CloseProcessByName "java.exe"
-SystemUtil.CloseProcessByName "excel.exe"
-Wait 2
+SystemUtil.CloseProcessByName "EXCEL.EXE"
+Wait 1
 
-WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False  '---> change the path as per the local 
-Wait 10
+Set objExcel = CreateObject("Excel.Application")
+objExcel.Visible = False
 
-AIUtil.SetContext Window("regexpwndtitle:=IBM Endpoint Manager.*", "regexpwndclass:=SunAwtFrame")
+Set objWorkbook = objExcel.Workbooks.Open(excelPath)
+	
+Call ReadLoginData(objWorkbook, laneAddress, userId, userPassword, domainName)
+	
+	Dim objLaneSheet
+	Dim lastRow
+	Dim r
+	
+	Set objLaneSheet = objWorkbook.Sheets("Lanes")
+	
+	lastRow = objLaneSheet.Cells(objLaneSheet.Rows.Count, 1).End(-4162).Row
+
+	For r = 2 To lastRow
+	
+	    laneAddress = Trim(objLaneSheet.Cells(r, 1).Value)
+	
+	    If laneAddress <> "" Then
+	
+	Reporter.ReportEvent micDone, _
+	    "Lane - " & laneAddress & " - Start", _
+	   "Lane - " & laneAddress
+
+	
+	        SystemUtil.CloseProcessByName "javaw.exe"
+	        SystemUtil.CloseProcessByName "java.exe"
+	
+	        Wait 2
+	
+	     WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False   '---> change the path as per the local 
+	
+	        Wait 5
+	
+	        AIUtil.SetContext _
+	        Window("regexpwndtitle:=IBM Endpoint Manager.*", _
+	               "regexpwndclass:=SunAwtFrame")
+	               
+'-------------------------------------------Flow---------------------------------------------------------------------------
+	               
+	
+	        Call openConnection(laneAddress)
+	
+	        Call userAuthenticate(userId, userPassword, domainName)
+	
+	        Call runHotFixPowerShell()
+	        
+	        Call pullClipboardToLocal(laneAddress)
+	
+	        Call validateHotFixes(objWorkbook,laneAddress)
+	
+	        Call closeConsole()
+	        
+Reporter.ReportEvent micDone, _
+    "Lane - " & laneAddress & " Completed", _
+   "Lane - " & laneAddress & " completed successfully."
+  ' ----------------------------------------------------------------------------------------------------------------------
+
+	    End If
+	
+	Next
+	
+objWorkbook.Save
+objWorkbook.Close False
+objExcel.Quit
+
+Set objWorkbook = Nothing
+Set objExcel = Nothing
 
 
 '===========================================================================
-' MAIN FLOW
+	' FUNCTION: READ LOGIN DATA FROM EXCEL (LoginData sheet)
 '===========================================================================
-
-Call openConnection(laneAddress)
-Call userAuthenticate(userId, userPassword, domainName)
-Call runHotFixPowerShell()
-Call pullClipboardToLocal()
-Call validateHotFixes(excelPath)
-Call closeConsole()
-
-'===========================================================================
-' FUNCTION: READ LOGIN DATA FROM EXCEL 
-'===========================================================================
-Function ReadLoginData(excelPath, ByRef laneAddress, ByRef userId, ByRef userPassword, ByRef domainName)
-
-    Dim objExcel, objWorkbook, objSheet
-    Dim lastRow, i, paramName, paramValue
-
-    Set objExcel     = CreateObject("Excel.Application")
-    objExcel.Visible = False
-
-    Set objWorkbook = objExcel.Workbooks.Open(excelPath)
-    Set objSheet    = objWorkbook.Sheets("LoginData")
-
-    lastRow = objSheet.UsedRange.Rows.Count
-
-    ' Column A = ParameterName | Column B = Value
-    For i = 2 To lastRow
-        paramName  = Trim(objSheet.Cells(i, 1).Value)
-        paramValue = Trim(objSheet.Cells(i, 2).Value)
-
-        Select Case LCase(paramName)
-            Case "laneaddress"  : laneAddress  = paramValue
-            Case "userid"       : userId        = paramValue
-            Case "userpassword" : userPassword  = paramValue
-            Case "domainname"   : domainName    = paramValue
-        End Select
-    Next
-
-    objWorkbook.Close False
-    objExcel.Quit
-
-    Reporter.ReportEvent micDone, "LoginData", _
-        "Lane: " & laneAddress & " | User: " & userId & " | Domain: " & domainName
-
-End Function
-
-
+Function ReadLoginData(objWorkbook, ByRef laneAddress, ByRef userId, ByRef userPassword, ByRef domainName)
+	
+	    
+	    Dim objLoginSheet
+	    Dim lastRow
+	    Dim i
+	    Dim paramName
+	    Dim paramValue
+	
+	    
+	    Set objLoginSheet    = objWorkbook.Sheets("LoginData")
+	
+	    lastRow = objLoginSheet.UsedRange.Rows.Count
+	
+	      For i = 2 To lastRow
+	
+	        paramName  = Trim(objLoginSheet.Cells(i, 1).Value)
+	        paramValue = Trim(objLoginSheet.Cells(i, 2).Value)
+	
+	        Select Case LCase(paramName)
+	           
+	            Case "userid"       		: userId			= paramValue
+	            Case "userpassword"	: userPassword	= paramValue
+	            Case "domainname"   : domainName	= paramValue
+	            
+	        End Select
+	
+	    Next
+	
+	    	
+	    Reporter.ReportEvent micDone, "LoginData", _
+	        "Lane: " & laneAddress & " | User: " & userId & " | Domain: " & domainName
+	
+	End Function'
+	
 '===========================================================================
 ' FUNCTION: OPEN CONNECTION
 '===========================================================================
@@ -202,8 +256,14 @@ End Function
 '===========================================================================
 ' FUNCTION:  PULL CLIPBOARD TO LOCAL
 '===========================================================================
-Function pullClipboardToLocal()
+Function pullClipboardToLocal(laneAddress)
 
+	Dim html
+	
+	Set html = CreateObject("htmlfile")
+	html.ParentWindow.ClipboardData.SetData "Text", ""
+	
+	Set html = Nothing
     ' Click inside Notepad content area on remote screen
     Window("regexpwndtitle:=IBM Endpoint Manager.*").Click 400, 300
     Wait 2
@@ -217,7 +277,7 @@ Function pullClipboardToLocal()
     Wait 5
 
     ' Click the Remote Control Viewer toolbar to trigger clipboard sync
- Window("IBM Endpoint Manager for Remote Control  (US90L01-09956)").Click 527,11
+Window("regexpwndtitle:=IBM Endpoint Manager.*").Click 525,11
     Wait 10
 
     ' Navigate down twice and Enter to confirm clipboard transfer
@@ -231,7 +291,7 @@ Function pullClipboardToLocal()
     Reporter.ReportEvent micDone, "Clipboard Pull", "Remote clipboard pulled to local machine."
 
     ' Read from local clipboard and save to file
-    Dim html, clipboardText
+    Dim html1, clipboardText
     Set html      = CreateObject("htmlfile")
     clipboardText = html.ParentWindow.ClipboardData.GetData("Text")
 
@@ -263,7 +323,7 @@ End Function
 '===========================================================================
 ' FUNCTION: VALIDATE HOTFIX IDs AGAINST EXCEL
 '===========================================================================
-Function validateHotFixes(excelPath)
+Function validateHotFixes(objWorkbook,laneAddress)
 
     ' Read local hotfix file
     Dim fso, txtFile, fileContent
@@ -286,45 +346,38 @@ Function validateHotFixes(excelPath)
 
     Reporter.ReportEvent micDone, "File Read", "hotfix_local.txt loaded successfully."
 
-    ' -----------------------------------------------------------------------
-    ' STEP 1: Kill any lingering Excel process before opening
-    ' -----------------------------------------------------------------------
-    SystemUtil.CloseProcessByName "excel.exe"
-    Wait 3
+  
+    Dim objPatchSheet
+    Set objPatchSheet    = objWorkbook.Sheets("PatchValidation")
+    
+    Dim resultCol
+Dim lastCol
 
-    ' -----------------------------------------------------------------------
-    ' STEP 2: Open Excel with Visible = True to avoid silent save failures
-    ' -----------------------------------------------------------------------
-    Dim objExcel, objWorkbook, objSheet
-    Set objExcel            = CreateObject("Excel.Application")
-    objExcel.Visible        = False    ' Visible so save is not blocked silently
-    objExcel.DisplayAlerts  = False
+lastCol = objPatchSheet.Cells(1, objPatchSheet.Columns.Count).End(-4159).Column
 
-    Set objWorkbook = objExcel.Workbooks.Open(excelPath)
-    Set objSheet    = objWorkbook.Sheets("PatchValidation")
+resultCol = lastCol + 1
+
+objPatchSheet.Cells(1, resultCol).Value = _
+    "Status-" & laneAddress
 
     Reporter.ReportEvent micDone, "Excel Opened", "PatchValidation sheet loaded."
 
-    ' -----------------------------------------------------------------------
-    ' STEP 3: Find last used row in Column A (HotfixID)
-    ' -----------------------------------------------------------------------
+   
     Dim lastRow
     lastRow = 1
-    Do While Trim(objSheet.Cells(lastRow + 1, 1).Value) <> ""
+    Do While Trim(objPatchSheet.Cells(lastRow + 1, 1).Value) <> ""
         lastRow = lastRow + 1
     Loop
 
     Reporter.ReportEvent micDone, "Row Count", "Total data rows found: " & (lastRow - 1)
 
-    ' -----------------------------------------------------------------------
-    ' STEP 4: Loop and validate each HotFix ID
-    ' -----------------------------------------------------------------------
+
     Dim i, hotFixID, installedOn, statusValue
 
     For i = 2 To lastRow
 
-        hotFixID    = Trim(objSheet.Cells(i, 1).Value)   ' Column A : HotfixID
-        installedOn = Trim(objSheet.Cells(i, 2).Value)   ' Column B : InstalledOn (reference only)
+        hotFixID    = Trim(objPatchSheet.Cells(i, 1).Value)   ' Column A : HotfixID
+        installedOn = Trim(objPatchSheet.Cells(i, 2).Value)   ' Column B : InstalledOn (reference only)
         statusValue = "FAIL"
 
         If hotFixID <> "" Then
@@ -340,48 +393,16 @@ Function validateHotFixes(excelPath)
             End If
 
             ' Write PASS/FAIL to Column C (Status)
-            objSheet.Cells(i, 3).Value = statusValue
+            objPatchSheet.Cells(i, resultCol).Value = statusValue
 
             ' Force cell update immediately after each write
-            objExcel.Calculate
 
         End If
 
     Next
 
-    ' -----------------------------------------------------------------------
-    ' STEP 5: Save using SaveAs to same path (avoids OneDrive/lock issues)
-    ' xlOpenXMLWorkbook = 51 (saves as .xlsx without prompt)
-    ' -----------------------------------------------------------------------
-    On Error Resume Next
-    objWorkbook.SaveAs excelPath, 51
-    If Err.Number <> 0 Then
-        Reporter.ReportEvent micFail, "Save Failed (SaveAs)", _
-            "SaveAs error: " & Err.Description & ". Trying Save..."
-        Err.Clear
-        objWorkbook.Save
-        If Err.Number <> 0 Then
-            Reporter.ReportEvent micFail, "Save Failed", _
-                "Both Save attempts failed: " & Err.Description
-        End If
-    Else
-        Reporter.ReportEvent micDone, "Excel Saved", "Results written to PatchValidation sheet successfully."
-    End If
-    On Error GoTo 0
-
-    ' -----------------------------------------------------------------------
-    ' STEP 6: Close Excel cleanly
-    ' -----------------------------------------------------------------------
-    objWorkbook.Close False   ' False = do NOT prompt save again
-    objExcel.Quit
-    Wait 2
-
-    Set objSheet    = Nothing
-    Set objWorkbook = Nothing
-    Set objExcel    = Nothing
-
-    Reporter.ReportEvent micDone, "Patch Validation Complete", _
-        "HotFix validation done. PASS/FAIL written to Column C of PatchValidation sheet."
+       Reporter.ReportEvent micDone, "Patch Validation Complete", _
+        "HotFix validation done. PASS/FAIL written  PatchValidation sheet."
 
 End Function
 

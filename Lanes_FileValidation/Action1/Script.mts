@@ -1,0 +1,471 @@
+﻿'===========================================================================
+' POS LANE FILE PATH VALIDATION
+'===========================================================================
+	Dim objWord
+	Dim objDoc
+	
+	Dim WshShell
+	Set WshShell = CreateObject("WScript.Shell")
+	
+	'--- Read from Excel 
+	Dim excelPath
+	excelPath ="C:\Users\BanuchandhiranM\Git\POS_Lanes_Automation\POS_Lanes_TestData.xlsx"	'--> Change path as per local setup
+	
+	Dim laneAddress, userId, userPassword, domainName
+		
+	Dim objExcel
+	Dim objWorkbook
+	
+	SystemUtil.CloseProcessByName "EXCEL.EXE"
+	Wait 1
+	
+	Set objExcel = CreateObject("Excel.Application")
+	objExcel.Visible = False
+	
+	Set objWorkbook = objExcel.Workbooks.Open(excelPath)
+		
+	Call ReadLoginData(objWorkbook, laneAddress, userId, userPassword, domainName)
+		
+		Dim objLaneSheet
+		Dim lastRow
+		Dim r
+		
+		Set objLaneSheet = objWorkbook.Sheets("Lanes")
+		
+		lastRow = objLaneSheet.Cells(objLaneSheet.Rows.Count, 1).End(-4162).Row
+	
+		For r = 2 To lastRow
+		
+		    laneAddress = Trim(objLaneSheet.Cells(r, 1).Value)
+		
+		    If laneAddress <> "" Then
+		
+		      
+Reporter.ReportEvent micDone, _
+	    "Lane - " & laneAddress & " - Start", _
+	   "Lane - " & laneAddress
+		
+		        SystemUtil.CloseProcessByName "javaw.exe"
+		        SystemUtil.CloseProcessByName "java.exe"
+		
+		        Wait 2
+		
+		     WshShell.Run "javaw -jar ""C:\Users\BanuchandhiranM\Downloads\TRCConsole.jar""", 1, False   '---> change the path as per the local 
+		
+		        Wait 5
+		
+		        AIUtil.SetContext _
+		        Window("regexpwndtitle:=IBM Endpoint Manager.*", _
+		               "regexpwndclass:=SunAwtFrame")
+		               
+'-------------------------------------------Flow---------------------------------------------------------------------------
+	               
+               Call initializeWordDocument(laneAddress)
+	
+	        Call openConnection(laneAddress)
+	
+	        Call userAuthenticate(userId, userPassword, domainName)
+	
+	        Call pathValidation(objWorkbook,laneAddress)
+	        
+	       Call closeConsole()
+	       
+	       Call finalizeWordDocument(laneAddress)
+	        
+	     Reporter.ReportEvent micDone, _
+    "Lane - " & laneAddress & " Completed", _
+   "Lane - " & laneAddress & " completed successfully."
+   
+  ' ----------------------------------------------------------------------------------------------------------------------
+
+	    End If
+	
+	Next
+	
+objWorkbook.Save
+objWorkbook.Close False
+objExcel.Quit
+
+Set objWorkbook = Nothing
+Set objExcel = Nothing
+
+'================================================
+' READ LOGIN DATA
+'================================================
+Function ReadLoginData(objWorkbook, ByRef laneAddress, ByRef userId, ByRef userPassword, ByRef domainName)
+	
+	    
+	    Dim objLoginSheet
+	    Dim lastRow
+	    Dim i
+	    Dim paramName
+	    Dim paramValue
+	
+	    
+	    Set objLoginSheet    = objWorkbook.Sheets("LoginData")
+	
+	    lastRow = objLoginSheet.UsedRange.Rows.Count
+	
+	      For i = 2 To lastRow
+	
+	        paramName  = Trim(objLoginSheet.Cells(i, 1).Value)
+	        paramValue = Trim(objLoginSheet.Cells(i, 2).Value)
+	
+	        Select Case LCase(paramName)
+	          
+	            Case "userid"       		: userId        = paramValue
+	            Case "userpassword" : userPassword  = paramValue
+	            Case "domainname"   : domainName    = paramValue
+	            
+	        End Select
+	
+	    Next
+	
+	    	
+	    Reporter.ReportEvent micDone, "LoginData", _
+	        "Lane: " & laneAddress & " | User: " & userId & " | Domain: " & domainName
+	
+	End Function'
+	
+'================================================
+' OPEN CONNECTION
+'================================================
+Function openConnection(laneAddress)
+
+    AIUtil("down_triangle", micAnyText, micFromTop, 1).Click
+
+    Wait 2
+
+    AIUtil("down_triangle", micAnyText, micFromTop, 1).Click
+
+    AIUtil("text_box", "Address").RightClick
+
+    Wait 2
+
+    WshShell.SendKeys "{DOWN}"
+    WshShell.SendKeys "{DOWN}"
+    WshShell.SendKeys "{ENTER}"
+
+    Wait 2
+
+    AIUtil("text_box", "Address").Type laneAddress
+
+    Reporter.ReportEvent micDone, "Lane Address", laneAddress
+
+    AIUtil("button", "Active").Click
+
+    Wait 3
+
+End Function
+
+
+'================================================
+' LOGIN
+'================================================
+Function userAuthenticate(userId, userPassword, domainName)
+
+    AIUtil("combobox", "User ID").Type userId
+
+    AIUtil("text_box", "Password").Type userPassword
+
+    AIUtil("combobox", "Domain").Click
+
+    Wait 2
+
+    Dim combo
+    Set combo = AIUtil("combobox", "Domain")
+
+    If Trim(combo.GetValue) <> Trim(domainName) Then
+        combo.Click
+        Wait 1
+    End If
+
+    AIUtil("button", "Login").Click
+
+    Wait 5
+
+End Function
+
+
+'================================================
+' FILE VALIDATION
+'================================================
+Function pathValidation(objWorkbook,laneAddress)
+
+    Dim k, rowCount, i, totalRows
+    Dim fileLocation, fileName
+    Dim statusValue, remarksValue
+
+    Set objFilepathSheet = objWorkbook.Sheets("FileValidation")       '------------------sheet name
+    
+    
+    
+    
+    
+    Dim statusCol
+    Dim remarksCol
+    Dim col
+
+	Dim lastUsedCol
+
+lastUsedCol = objFilepathSheet.Cells(1, objFilepathSheet.Columns.Count).End(-4159).Column
+
+statusCol = lastUsedCol + 1
+remarksCol = lastUsedCol + 2
+
+objFilepathSheet.Cells(1, statusCol).Value = _
+    "Status-" & laneAddress
+
+objFilepathSheet.Cells(1, remarksCol).Value = _
+    "Remarks-" & laneAddress
+	
+	    ' Find the true row count based purely on where the input file locations end
+	    totalRows = objFilepathSheet.UsedRange.Rows.Count
+	
+	    rowCount = 1 ' Start at header row
+	    For k = 2 To totalRows
+	        If Trim(objFilepathSheet.Cells(k, 1).Value) <> "" Then
+	            rowCount = k
+	        Else
+	            Exit For ' Stop counting as soon as an empty file path row is hit
+	        End If
+	    Next
+	
+	    Reporter.ReportEvent micDone, "Total Active Files to Test", (rowCount - 1)
+	
+	
+	    '================================================
+	    ' OPEN TASK MANAGER
+	    '================================================
+	
+	    Window("regexpwndtitle:=IBM Endpoint Manager.*").Activate
+	
+	    Wait 2
+	
+	    Window("regexpwndtitle:=IBM Endpoint Manager.*").Click 332, 10
+	
+	    Wait 5
+	
+	    WshShell.SendKeys "{ENTER}"
+	
+	    Wait 1
+	
+	    WshShell.SendKeys "{DOWN}"
+	
+	    Wait 1
+	
+	    WshShell.SendKeys "{ENTER}"
+	
+	    Wait 3
+	
+	    AIUtil.FindTextBlock("Task Manager").Click
+	
+	    Wait 3
+	
+	    AIUtil.FindTextBlock("File").Click
+	
+	    Wait 1
+	
+	    WshShell.SendKeys "{DOWN}"
+	
+	    Wait 1
+	
+	    WshShell.SendKeys "{ENTER}"
+
+    Wait 5
+
+
+    '================================================
+    ' LOOP FILES
+    '================================================
+    For i = 2 To rowCount
+
+        fileLocation = Trim(objFilepathSheet.Cells(i, 1).Value)
+        fileName     = Trim(objFilepathSheet.Cells(i, 2).Value)
+
+        Reporter.ReportEvent micDone, "Checking File : "&fileName, fileName
+        
+
+        '================================================
+        ' OPEN PATH
+        '================================================
+        WshShell.SendKeys "^l"
+
+        Wait 1
+
+        WshShell.SendKeys fileLocation
+
+        Wait 1
+
+        WshShell.SendKeys "{ENTER}"
+
+        Wait 5
+
+
+        '================================================
+        ' SEARCH FILE
+        '================================================
+        WshShell.SendKeys "^e"
+
+        Wait 1
+
+        WshShell.SendKeys "^a"
+
+        Wait 1
+
+        WshShell.SendKeys "{BACKSPACE}"
+
+        Wait 1
+
+        WshShell.SendKeys (fileName)
+
+        Wait 8
+
+
+        '================================================
+        ' RELIABLE STATUS BAR VALIDATION
+        '================================================
+        Dim statusBarText
+
+        Wait 3 ' Give Explorer a moment to update the item count
+
+        On Error Resume Next
+        ' Capture the text block in the bottom left corner
+        statusBarText = AIUtil.FindTextBlock(micAnyText, micFromBottom, 1).GetValue
+        Err.Clear
+        On Error GoTo 0
+
+        ' Clean and analyze the captured text string
+        statusBarText = Trim(LCase(statusBarText))
+
+        ' Check if it contains "0 items" or if the search failed entirely
+        If InStr(statusBarText, "0 item") > 0 Then
+            statusValue = "FAIL"
+            remarksValue = "File Missing"
+            Reporter.ReportEvent micFail, "FILE MISSING", fileName
+            Call takeScreenshotToWord("File Missing - " & fileName)
+        Else
+            statusValue = "PASS"
+            remarksValue = "File Available"
+            Reporter.ReportEvent micDone, "FILE FOUND", fileName
+        End If
+
+        '================================================
+        ' WRITE RESULT TO EXCEL
+        '================================================
+	objFilepathSheet.Cells(i, statusCol).Value = statusValue
+	objFilepathSheet.Cells(i, remarksCol).Value = remarksValue
+
+        Wait 2
+
+    Next
+
+    Reporter.ReportEvent micDone, "Excel Updated", "Result written successfully"
+
+    '================================================
+    ' CLOSE EXPLORER
+    '================================================
+    AIUtil("close", micAnyText, micFromTop, 2).Click
+
+End Function
+
+'================================================
+' CLOSE CONSOLE
+'================================================
+Function closeConsole()
+
+ On Error Resume Next
+
+    Window("regexpwndtitle:=IBM Endpoint Manager.*").Activate
+    Wait 2
+
+    AIUtil("close", micAnyText, micFromBottom, 1).Click
+    Wait 2
+    
+     AIUtil("close").Click
+     Wait 2
+     AIUtil("button", "Yes").Click
+     Wait 2
+
+    If Window("regexpwndtitle:=IBM Endpoint Manager.*").Exist(3) Then
+
+        SystemUtil.CloseProcessByName "javaw.exe"
+        SystemUtil.CloseProcessByName "java.exe"
+
+    End If
+
+    On Error GoTo 0
+
+End Function
+
+
+'================================================
+' INITIALIZE WORD DOCUMENT
+'================================================
+Function initializeWordDocument(laneAddress)
+
+    Set objWord = CreateObject("Word.Application")
+    objWord.Visible = True
+    Set objDoc = objWord.Documents.Add()
+
+End Function
+
+'================================================
+' SAVE AND CLOSE WORD DOCUMENT
+'================================================
+Function finalizeWordDocument(laneAddress)
+
+    Dim savePath
+   savePath = "C:\Users\BanuchandhiranM\Lanes\TestEvidence_Filepath_" & laneAddress & ".docx"	'---> change the path as per the local 
+
+    objDoc.SaveAs savePath
+    objDoc.Close
+    objWord.Quit
+
+    Set objDoc = Nothing
+    Set objWord = Nothing
+
+End Function
+
+
+'================================================
+' TAKE SCREENSHOT AND INSERT INTO WORD
+'================================================
+Function takeScreenshotToWord(stepName)
+
+    Dim folderPath, fso, fileName, fullPath, rng
+
+    folderPath = "C:\Users\BanuchandhiranM\Lanes\Screenshots\"  			'----> change the path as per the local 
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+
+    If Not fso.FolderExists(folderPath) Then
+        fso.CreateFolder(folderPath)
+    End If
+
+    
+    fileName = stepName & "_" & Replace(Replace(Now, ":", "_"), "/", "_") & ".png"
+    fullPath = folderPath & fileName
+
+   
+    Desktop.CaptureBitmap fullPath, True
+
+ 
+    Set rng = objDoc.Range
+
+  
+    rng.Collapse 0
+
+
+    objDoc.InlineShapes.AddPicture fullPath, False, True, rng
+
+
+    rng.Collapse 0
+
+    rng.InsertAfter vbNewLine & stepName & vbNewLine
+
+
+    rng.Collapse 0
+    rng.InsertAfter vbNewLine
+
+End Function
